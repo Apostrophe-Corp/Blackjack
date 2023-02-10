@@ -478,13 +478,20 @@ const simulatePlay = async () => {
 	i = 0
 }
 console.log('[+] Starting the Game...')
-await reach.withDisconnect(() =>
-	dealer.ctc.p.D({
-		bankAmount: reach.parseCurrency(900),
-		deployed: async () => {
-			console.log('[+] Blackjack started')
-			await simulatePlay()
-			reach.disconnect(null)
-		},
-	})
-)
+const startGame = async () => {
+	return await reach.withDisconnect(() =>
+		dealer.ctc.p.D({
+			bankAmount: reach.parseCurrency(900),
+			deployed: async () => {
+				console.log('[+] Blackjack started')
+				await simulatePlay()
+				reach.disconnect(null)
+			},
+		})
+	)
+}
+
+await new Promise((resolve) => async () => {
+	await startGame()
+	resolve()
+})

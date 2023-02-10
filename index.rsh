@@ -37,9 +37,13 @@ const getOutcome = (
 		} else if (cardValue > dealerHand) {
 			if (cardValue == 21 && cardCount == 2) {
 				return BLACKJACK
-			} else {
+			} else if (cardValue < 22) {
 				return P_WINS
+			} else {
+				return D_WINS
 			}
+		} else if (cardValue == dealerHand) {
+			return PUSH
 		} else {
 			return D_WINS
 		}
@@ -110,7 +114,8 @@ export const main = Reach.App(() => {
 							ret(outcome.pad('Dealer Wins'))
 							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else if (result == PUSH) {
-							if (balance() >= bet) transfer(bet).to(this)
+							if (balance() >= (boughtInsurance ? bet / 2 : bet))
+								transfer(boughtInsurance ? bet / 2 : bet).to(this)
 							ret(outcome.pad('Push'))
 							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else if (result == RETRIEVE) {

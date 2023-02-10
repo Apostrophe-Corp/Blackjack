@@ -279,7 +279,6 @@ const play = async (player, who) => {
 		if (dealerFirstCard in tenCardsNA) {
 			const move = Math.floor(Math.random() * 3)
 			if (move == 0) {
-				player.bet *= 2
 				player.boughtInsurance = true
 				console.log(`[+] ${who} bought insurance`)
 			} else if (move == 1 && !playerSurrendered) {
@@ -291,8 +290,7 @@ const play = async (player, who) => {
 		}
 		if (!player.surrendered) {
 			let value = cardValue(player.cards)
-			let keepPlaying = true
-			while (keepPlaying && value < 21) {
+			while (value < 21) {
 				const choice = choices[Math.floor(Math.random() * choices.length)]
 				if (
 					cardValue(player.cards) == 9 ||
@@ -332,13 +330,14 @@ const play = async (player, who) => {
 			}
 			console.log(`[+] ${who}'s card value is ${value}`)
 		}
+	} else {
+		console.log(`[+] ${who} stood`)
 	}
 	if (player.cards_.length) {
 		if (cardValue(player.cards_) != 21) {
 			if (dealerFirstCard in tenCardsNA) {
 				const move = Math.floor(Math.random() * 3)
 				if (move == 0) {
-					player.bet_ *= 2
 					player.boughtInsurance_ = true
 					console.log(`[+] ${who} bought insurance for his second hand`)
 				} else if (move == 1 && !playerSurrendered) {
@@ -350,8 +349,7 @@ const play = async (player, who) => {
 			}
 			if (!player.surrendered_) {
 				let value = cardValue(player.cards_)
-				let keepPlaying = true
-				while (keepPlaying && value < 21) {
+				while (value < 21) {
 					const choice = choices[Math.floor(Math.random() * choices.length)]
 					if (
 						cardValue(player.cards_) == 9 ||
@@ -391,6 +389,8 @@ const play = async (player, who) => {
 				}
 				console.log(`[+] ${who}'s second hand card value is ${value}`)
 			}
+		} else {
+			console.log(`[+] ${who} stood his second hand`)
 		}
 	}
 	return result

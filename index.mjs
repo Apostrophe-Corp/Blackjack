@@ -247,7 +247,7 @@ const generatePlayers = async (amount) => {
 const play = async (player, who) => {
 	let result = false
 	if (cardValue(player.cards) == 21) {
-		console.log(`[+]${who} was dealt a natural`)
+		console.log(`[+] ${who} was dealt a natural`)
 		// Possible blackjack win
 		return result
 	}
@@ -258,7 +258,7 @@ const play = async (player, who) => {
 		// A split must occur
 		player.cards_.push(player.cards.pop())
 		player.bet_ = bet
-		console.log(`[+]${who} just made a split`)
+		console.log(`[+] ${who} just made a split`)
 		dealCard(player.cards, 1)
 		console.log(`[-] ${who} was dealt:`, player.cards[player.cards.length - 1])
 		dealCard(player.cards_, 1)
@@ -275,12 +275,12 @@ const play = async (player, who) => {
 			if (buyInsurance) {
 				player.bet *= 2
 				player.boughtInsurance = true
-				console.log(`[+]${who} bought insurance`)
+				console.log(`[+] ${who} bought insurance`)
 			}
 		} else if (move == 'Surrender') {
 			player.surrendered = true
 			result = true
-			console.log(`[+]${who} surrendered`)
+			console.log(`[+] ${who} surrendered`)
 		}
 		if (move != 'Surrender') {
 			let value = cardValue(player.cards)
@@ -296,7 +296,7 @@ const play = async (player, who) => {
 					if (doubleDown) {
 						player.bet *= 2
 						dealCard(player.cards, 1)
-						console.log(`[+]${who} doubled down`)
+						console.log(`[+] ${who} doubled down`)
 						console.log(
 							`[-] ${who} was dealt:`,
 							player.cards[player.cards.length - 1]
@@ -308,19 +308,19 @@ const play = async (player, who) => {
 				if (choice == 'Hit') {
 					if(cardValue(player.cards) == 20) break
 					dealCard(player.cards, 1)
-					console.log(`[+]${who} called for a hit`)
+					console.log(`[+] ${who} called for a hit`)
 					console.log(
 						`[-] ${who} was dealt:`,
 						player.cards[player.cards.length - 1]
 					)
 					value = cardValue(player.cards)
 				} else if (choice == 'Stand') {
-					console.log(`[+]${who} stood`)
+					console.log(`[+] ${who} stood`)
 					value = cardValue(player.cards)
 					break
 				}
 			}
-			console.log(`[+]${who}'s card value is ${value}`)
+			console.log(`[+] ${who}'s card value is ${value}`)
 		}
 	}
 	if (player.cards_) {
@@ -331,12 +331,12 @@ const play = async (player, who) => {
 				if (buyInsurance) {
 					player.bet_ *= 2
 					player.boughtInsurance_ = true
-					console.log(`[+]${who} bought insurance for his second hand`)
+					console.log(`[+] ${who} bought insurance for his second hand`)
 				}
 			} else if (move == 'Surrender') {
 				player.surrendered_ = true
 				result = true
-				console.log(`[+]${who} surrendered his second hand`)
+				console.log(`[+] ${who} surrendered his second hand`)
 			}
 			if (move != 'Surrender') {
 				let value = cardValue(player.cards_)
@@ -376,7 +376,7 @@ const play = async (player, who) => {
 						break
 					}
 				}
-				console.log(`[+]${who}'s second hand card value is ${value}`)
+				console.log(`[+] ${who}'s second hand card value is ${value}`)
 			}
 		}
 	}

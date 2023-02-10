@@ -446,7 +446,7 @@ const simulatePlay = async () => {
 test.one('Blackjack works', async () => {
 	await Promise.all([
 		reach.withDisconnect(() =>
-			dealer.ctc.p.Dealer({
+			dealer.ctc.p.D({
 				bankAmount: reach.parseCurrency(900),
 				deployed: async () => {
 					console.log('Blackjack started')

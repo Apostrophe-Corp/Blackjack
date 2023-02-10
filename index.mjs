@@ -384,9 +384,9 @@ const play = async (player, who) => {
 }
 
 const playDealer = async (dealer) => {
-	console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
+		console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),
@@ -396,6 +396,7 @@ const playDealer = async (dealer) => {
 			console.log({ error })
 		}
 	} else {
+		console.log(`[+] Dealer does not have a natural, as his second card is:`, dealer.cards[1])
 		let value = cardValue(dealer.cards)
 		let keepPlaying = true
 		while (keepPlaying && value < 21) {
@@ -436,6 +437,7 @@ const getOutcome = async (player, who) => {
 				player.boughtInsurance,
 				player.surrendered
 			)
+			console.log(`[-] ${who} pays his wager of ${fmt(player.bet)} ${reach.standardUnit}, and awaits his outcome`)
 			const response = noneNull(byteResponse)
 			outcome.push(response)
 		} catch (error) {
@@ -450,6 +452,7 @@ const getOutcome = async (player, who) => {
 				player.boughtInsurance,
 				player.surrendered
 			)
+			console.log(`[-] ${who} pays his wager of ${fmt(player.bet)} ${reach.standardUnit}, and awaits his outcome`)
 			const response = noneNull(byteResponse)
 			outcome.push(response)
 			const byteResponse_ = await player.ctc.apis.Player.getOutcome(
@@ -459,6 +462,7 @@ const getOutcome = async (player, who) => {
 				player.boughtInsurance_,
 				player.surrendered_
 			)
+			console.log(`[-] ${who} pays his second wager of ${fmt(player.bet)} ${reach.standardUnit}, and awaits his second outcome`)
 			const response_ = noneNull(byteResponse_)
 			outcome.push(response_)
 		} catch (error) {

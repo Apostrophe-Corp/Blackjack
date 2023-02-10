@@ -301,6 +301,7 @@ const play = async (player, who) => {
 							`[-] ${who} was dealt:`,
 							player.cards[player.cards.length - 1]
 						)
+						value = cardValue(player.cards)
 						break
 					}
 				}
@@ -312,11 +313,12 @@ const play = async (player, who) => {
 						`[-] ${who} was dealt:`,
 						player.cards[player.cards.length - 1]
 					)
+					value = cardValue(player.cards)
 				} else if (choice == 'Stand') {
 					console.log(`[+]${who} stood`)
+					value = cardValue(player.cards)
 					break
 				}
-				value = cardValue(player.cards)
 			}
 			console.log(`[+]${who}'s card value is ${value}`)
 		}
@@ -355,6 +357,7 @@ const play = async (player, who) => {
 								`[-] ${who}'s second hand was dealt:`,
 								player.cards_[player.cards_.length - 1]
 							)
+							value = cardValue(player.cards_)
 							break
 						}
 					}
@@ -366,11 +369,12 @@ const play = async (player, who) => {
 							`[-] ${who} was dealt:`,
 							player.cards_[player.cards_.length - 1]
 						)
+						value = cardValue(player.cards_)
 					} else if (choice == 'Stand') {
 						console.log(`[+] ${who} stood his second hand`)
+						value = cardValue(player.cards_)
 						break
 					}
-					value = cardValue(player.cards_)
 				}
 				console.log(`[+]${who}'s second hand card value is ${value}`)
 			}

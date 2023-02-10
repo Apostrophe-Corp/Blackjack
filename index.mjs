@@ -386,7 +386,7 @@ const play = async (player, who) => {
 const playDealer = async (dealer, onSurrender) => {
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
-		console.log(`[+] Dealer has a natural:`, dealer.cards[1])
+		console.log(`[+] Dealer has a natural, as his second card is:`, dealer.cards[1])
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),
@@ -394,9 +394,15 @@ const playDealer = async (dealer, onSurrender) => {
 			)
 		} catch (error) {
 			console.log({ error })
-		}		
+		}
+		return true		
 	} else {
-		if(onSurrender) return
+		if(onSurrender) {
+			console.log(`[+] Dealer does not have a natural`)
+			return false
+		}else{
+			console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
+		}
 		let value = cardValue(dealer.cards)
 		let keepPlaying = true
 		while (keepPlaying && value < 21) {
@@ -422,8 +428,8 @@ const playDealer = async (dealer, onSurrender) => {
 		} catch (error) {
 			console.log({ error })
 		}
+		return false
 	}
-	return
 }
 
 const getOutcome = async (player, who) => {

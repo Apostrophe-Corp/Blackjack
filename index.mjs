@@ -412,7 +412,11 @@ const playDealer = async (dealer, onSurrender) => {
 			`[+] Dealer has a natural, as his second card is:`,
 			dealer.cards[1]
 		)
-		console.log(`[+] Dealer's card value is`, String(cardValue(dealer.cards)))
+		console.log(
+			`[+] Dealer's card value is`,
+			String(cardValue(dealer.cards)),
+			`${value > 21 ? `, It's a Bust!` : ''}`
+		)
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),
@@ -454,7 +458,11 @@ const playDealer = async (dealer, onSurrender) => {
 			}
 			value = cardValue(dealer.cards)
 		}
-		console.log(`[+] Dealer's card value is`, String(cardValue(dealer.cards)))
+		console.log(
+			`[+] Dealer's card value is`,
+			String(cardValue(dealer.cards)),
+			`${value > 21 ? `, It's a Bust!` : ''}`
+		)
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),

@@ -436,6 +436,7 @@ const playDealer = async (dealer, onSurrender) => {
 			}
 			value = cardValue(dealer.cards)
 		}
+		console.log(`[+] Dealer card value is:`, cardValue(dealer.cards))
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),

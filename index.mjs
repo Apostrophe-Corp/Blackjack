@@ -519,8 +519,8 @@ const simulatePlay = async (amount, cardCount) => {
 		const player = players[i]
 		const playerSurrendered = await play(player, `Player_${i + 1}`)
 		if (playerSurrendered) {
-			await playDealer(dealer, true)
-			const outcome = await getOutcome(player)
+			const gameEnds = await playDealer(dealer, true)
+			const outcome = await getOutcome(player, `Player_${i + 1}`)
 			if (outcome[0] == 'END' || (player.cards_ && outcome[1] == 'END')) {
 				console.log(
 					`Player_${
@@ -528,6 +528,7 @@ const simulatePlay = async (amount, cardCount) => {
 					} surrendered with the Dealer actually having a blackjack`
 				)
 				console.log(`The Game has ended`)
+				return
 			}
 		}
 	}

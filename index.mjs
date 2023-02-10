@@ -281,6 +281,7 @@ const play = async (player, who) => {
 			player.surrendered = true
 			result = true
 			console.log(`[+] ${who} surrendered`)
+			moves.splice(0,1)
 		}
 		if (move != 'Surrender') {
 			let value = cardValue(player.cards)
@@ -557,12 +558,12 @@ reach.withDisconnect(() =>
 			console.log('[+] Blackjack started')
 			console.log(
 				'[+] The Bank is currently has',
-				fmt((await dealer.ctc.v.bank())[1])
+				fmt((await dealer.ctc.v.bank())[1]), reach.standardUnit
 			)
 			await simulatePlay(4, 2)
 			console.log(
 				'[+] The Bank is left with',
-				fmt((await dealer.ctc.v.bank())[1])
+				fmt((await dealer.ctc.v.bank())[1]), reach.standardUnit
 			)
 			reach.disconnect(null)
 		},

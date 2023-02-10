@@ -10,65 +10,54 @@ Warning: your program uses stdlib.fundFromFaucet. That means it only works on Re
 [+] The Dealer publishes the base bet: 100 ALGO
 [+] Players are seated
 [+] Dealing their cards
-[-] Player_1 was dealt: [ 'Q', 'clovers' ]
-[-] Player_2 was dealt: [ '6', 'hearts' ]
-[-] Player_3 was dealt: [ '6', 'clovers' ]
-[-] Player_4 was dealt: [ '7', 'clovers' ]
+[-] Player_1 was dealt: [ '7', 'hearts' ]
+[-] Player_2 was dealt: [ '10', 'clovers' ]
+[-] Player_3 was dealt: [ 'A', 'spades' ]
+[-] Player_4 was dealt: [ 'A', 'diamonds' ]
 [+] Dealing the Dealer
-[-] Player_1 was dealt: [ '2', 'diamonds' ]
-[-] Player_2 was dealt: [ '3', 'diamonds' ]
-[-] Player_3 was dealt: [ 'J', 'diamonds' ]
-[-] Player_4 was dealt: [ '10', 'clovers' ]
+[-] Player_1 was dealt: [ '8', 'diamonds' ]
+[-] Player_2 was dealt: [ 'J', 'spades' ]
+[-] Player_3 was dealt: [ 'J', 'hearts' ]
+[-] Player_4 was dealt: [ '2', 'diamonds' ]
 [+] Dealing the Dealer
 [+] Dealing complete
 [+] These are the initial cards
-[-] Player_1 has: [ [ 'Q', 'clovers' ], [ '2', 'diamonds' ] ]
-[-] Player_2 has: [ [ '6', 'hearts' ], [ '3', 'diamonds' ] ]
-[-] Player_3 has: [ [ '6', 'clovers' ], [ 'J', 'diamonds' ] ]
-[-] Player_4 has: [ [ '7', 'clovers' ], [ '10', 'clovers' ] ]
-[+] The Dealer's visible card is: [ 'K', 'hearts' ]
+[-] Player_1 has: [ [ '7', 'hearts' ], [ '8', 'diamonds' ] ]
+[-] Player_2 has: [ [ '10', 'clovers' ], [ 'J', 'spades' ] ]
+[-] Player_3 has: [ [ 'A', 'spades' ], [ 'J', 'hearts' ] ]
+[-] Player_4 has: [ [ 'A', 'diamonds' ], [ '2', 'diamonds' ] ]
+[+] The Dealer's visible card is: [ '4', 'spades' ]
 [+] Players can now have their turns
-[+] Player_1 bought insurance
 [+] Player_1 stood
-[+] Player_1's card value is 12
-[+] Player_2 bought insurance
-[+] Player_2 doubled down
-[-] Player_2 was dealt: [ '5', 'clovers' ]
-[+] Player_2's card value is 14
-[+] Player_3 bought insurance
-[+] Player_3 called for a hit
-[-] Player_3 was dealt: [ 'A', 'hearts' ]
-[+] Player_3 called for a hit
-[-] Player_3 was dealt: [ 'K', 'spades' ]
-[+] Player_3's card value is 27, It's a Bust!
-[+] Player_4 surrendered
-[+] Dealer has a natural, as his second card is: [ 'A', 'clovers' ]
-[+] Dealer's card value is 21
-[-] Player_4's balance before submitting: 1000 ALGO
-[-] Player_4's hand is: [ [ '7', 'clovers' ], [ '10', 'clovers' ] ]
-[-] Player_4 pays his wager, and awaits his outcome
-[-] Player_4's balance after submitting: 949.998 ALGO
-[+] Dealer has a natural, as his second card is: [ 'A', 'clovers' ]
-[+] Dealer's card value is 21
-[+] The Dealer's hand [ [ 'K', 'hearts' ], [ 'A', 'clovers' ] ]
+[+] Player_1's card value is 15
+[+] Player_2's card value is 20
+[+] Player_3 was dealt a natural
+[+] Player_4 called for a hit
+[-] Player_4 was dealt: [ '7', 'spades' ]
+[+] Player_4 stood
+[+] Player_4's card value is 20
+[+] Dealer now reveals his second card: [ 'Q', 'clovers' ]
+[+] Dealer has stood
+[+] Dealer's card value is 14
+[+] The Dealer's hand [ [ '4', 'spades' ], [ 'Q', 'clovers' ] ]
 [-] Player_1's balance before submitting: 1000 ALGO
-[-] Player_1's hand is: [ [ 'Q', 'clovers' ], [ '2', 'diamonds' ] ]
+[-] Player_1's hand is: [ [ '7', 'hearts' ], [ '8', 'diamonds' ] ]
 [-] Player_1 pays his wager, and awaits his outcome
-[+] The outcome for Player_1 is: [ 'Retrieve' ]
-[-] Player_1's balance after submitting: 999.997 ALGO
+[+] The outcome for Player_1 is: [ 'Player Wins' ]
+[-] Player_1's balance after submitting: 1099.997 ALGO
 [-] Player_2's balance before submitting: 1000 ALGO
-[-] Player_2's hand is: [ [ '6', 'hearts' ], [ '3', 'diamonds' ], [ '5', 'clovers' ] ]
+[-] Player_2's hand is: [ [ '10', 'clovers' ], [ 'J', 'spades' ] ]
 [-] Player_2 pays his wager, and awaits his outcome
-[+] The outcome for Player_2 is: [ 'Retrieve' ]
-[-] Player_2's balance after submitting: 999.997 ALGO
+[+] The outcome for Player_2 is: [ 'Player Wins' ]
+[-] Player_2's balance after submitting: 1099.997 ALGO
 [-] Player_3's balance before submitting: 1000 ALGO
-[-] Player_3's hand is: [
-  [ '6', 'clovers' ],
-  [ 'J', 'diamonds' ],
-  [ 'A', 'hearts' ],
-  [ 'K', 'spades' ]
-]
+[-] Player_3's hand is: [ [ 'A', 'spades' ], [ 'J', 'hearts' ] ]
 [-] Player_3 pays his wager, and awaits his outcome
-[+] The outcome for Player_3 is: [ 'Retrieve' ]
-[-] Player_3's balance after submitting: 999.997 ALGO
-[+] The Bank is left with 950 ALGO
+[+] The outcome for Player_3 is: [ 'Blackjack' ]
+[-] Player_3's balance after submitting: 1149.997 ALGO
+[-] Player_4's balance before submitting: 1000 ALGO
+[-] Player_4's hand is: [ [ 'A', 'diamonds' ], [ '2', 'diamonds' ], [ '7', 'spades' ] ]
+[-] Player_4 pays his wager, and awaits his outcome
+[+] The outcome for Player_4 is: [ 'Player Wins' ]
+[-] Player_4's balance after submitting: 1099.995 ALGO
+[+] The Bank is left with 900 ALGO

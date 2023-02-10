@@ -47,12 +47,16 @@ const getOutcome = (
 		if (dealerHand > cardValue) {
 			return D_WINS
 		} else if (cardValue > dealerHand) {
-			if ((cardValue == 21) & (cardCount == 2)) {
+			if (cardValue == 21 && cardCount == 2) {
 				return BLACKJACK
 			} else {
 				return P_WINS
 			}
+		} else {
+			return D_WINS
 		}
+	} else {
+		return D_WINS
 	}
 }
 assert(winner(20, 21) == D_WINS_)
@@ -98,12 +102,49 @@ export const main = Reach.App(() => {
 		.while(keepGoing)
 		.api_(
 			Player.getOutcome,
-			(cardValue, cardCount, bet, boughtInsurance, surrendered) => {
+			(cardValue, cardCount, bet_, boughtInsurance, surrendered) => {
+				const bet = boughtInsurance ? bet_ * 2 : surrendered ? bet_ / 2 : bet_
 				return [
 					bet,
 					(ret) => {
-						ret(outcome.pad(''))
-						return [bets, keepGoing, dealerHand, dealerCount]
+						const result = getOutcome(
+							dealerHand,
+							dealerCount,
+							cardValue,
+							cardCount,
+							boughtInsurance,
+							surrendered
+						)
+						if (result == P_WINS) {
+							const prize = bet * 2
+							if (balance() >= prize) transfer(prize).to(this)
+							ret(outcome.pad('Player Wins'))
+							return [bets - bet, keepGoing, dealerHand, dealerCount]
+						} else if (result == D_WINS) {
+							ret(outcome.pad('Dealer Wins'))
+							return [bets + bet, keepGoing, dealerHand, dealerCount]
+						} else if (result == PUSH) {
+							if (balance() >= bet) transfer(bet).to(this)
+							ret(outcome.pad('Push'))
+							return [bets, keepGoing, dealerHand, dealerCount]
+						} else if (result == RETRIEVE) {
+							if (boughtInsurance && balance() >= bet) transfer(bet).to(this)
+							ret(outcome.pad('Retrieve'))
+							return [bets, keepGoing, dealerHand, dealerCount]
+						} else if (result == BLACKJACK) {
+							if (balance() >= bet + bet + bet / 2)
+								transfer(bet + bet + bet / 2).to(this)
+							ret(outcome.pad('Blackjack'))
+							return [
+								bets - (bet + bet / 2),
+								keepGoing,
+								dealerHand,
+								dealerCount,
+							]
+						} else {
+							ret(outcome.pad('End'))
+							return [bets, keepGoing, dealerHand, dealerCount]
+						}
 					},
 				]
 			}

@@ -257,11 +257,15 @@ const generatePlayers = async (amount) => {
 }
 
 const play = async (player) => {
+	let result = false
 	if (cardValue(player.cards) == 21) {
 		// Possible blackjack win
-		return
+		return result
 	}
-	if (player.cards[0][0] == player.cards[1][0]) {
+	if (
+		(player.cards[0][0] == '8' || player.cards[0][0] == 'A') &&
+		player.cards[0][0] == player.cards[1][0]
+	) {
 		// A split must occur
 		player.cards_.push(player.cards.pop())
 		dealCard(player.cards, 1)
@@ -279,7 +283,7 @@ const play = async (player) => {
 			}
 		} else if (move == 'Surrender') {
 			player.surrendered = true
-			// TODO call function to handle surrender
+			result = true
 		}
 		if (move != 'Surrender') {
 			let value = cardValue(player.cards)
@@ -310,7 +314,7 @@ const play = async (player) => {
 				}
 			} else if (move == 'Surrender') {
 				player.surrendered_ = true
-				// TODO call function to handle surrender
+				result = true
 			}
 			if (move != 'Surrender') {
 				let value = cardValue(player.cards_)
@@ -331,12 +335,12 @@ const play = async (player) => {
 			}
 		}
 	}
+	return result
 }
 
 const playDealer = async (dealer) => {
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
-		// TODO Submit the dealers hand
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),
@@ -370,57 +374,46 @@ const playDealer = async (dealer) => {
 }
 
 const getOutcome = async (player) => {
-	const pOutcomes = {
-		'Player Wins': 0,
-		'Dealer Wins': 1,
-		Push: 2,
-		'Blackjack Win': 3,
+	const outcome = []
+	if (!player.cards_) {
+		try {
+			const byteResponse = await player.ctc.apis.Player.getOutcome(
+				cardValue(player.cards),
+				player.cards.length,
+				player.bet,
+				player.boughtInsurance,
+				player.surrendered
+			)
+			const response = noneNull(byteResponse)
+			outcome.push(response)
+		} catch (error) {
+			console.log({ error })
+		}
+	} else {
+		try {
+			const byteResponse = await player.ctc.apis.Player.getOutcome(
+				cardValue(player.cards),
+				player.cards.length,
+				player.bet,
+				player.boughtInsurance,
+				player.surrendered
+			)
+			const response = noneNull(byteResponse)
+			outcome.push(response)
+			const byteResponse_ = await player.ctc.apis.Player.getOutcome(
+				cardValue(player.cards_),
+				player.cards_.length,
+				player.bet_,
+				player.boughtInsurance_,
+				player.surrendered_
+			)
+			const response_ = noneNull(byteResponse_)
+			outcome.push(response_)
+		} catch (error) {
+			console.log({ error })
+		}
 	}
-	return !player.cards_
-		? [
-				outcomes[
-					pOutcomes[
-						noneNull(
-							await player.ctc.apis.Player.getOutcome(
-								cardValue(player.cards),
-								player.cards.length,
-								player.bet,
-								player.boughtInsurance,
-								player.surrendered
-							)
-						)
-					]
-				],
-		  ]
-		: [
-				outcomes[
-					pOutcomes[
-						noneNull(
-							await player.ctc.apis.Player.getOutcome(
-								cardValue(player.cards),
-								player.cards.length,
-								player.bet,
-								player.boughtInsurance,
-								player.surrendered
-							)
-						)
-					]
-				],
-				,
-				outcomes[
-					pOutcomes[
-						noneNull(
-							await player.ctc.apis.Player.getOutcome(
-								cardValue(player.cards_),
-								player.cards_.length,
-								player.bet_,
-								player.boughtInsurance_,
-								player.surrendered_
-							)
-						)
-					]
-				],
-		  ]
+	return outcome
 }
 
 const dealCard = (cards, amount) => {
@@ -431,16 +424,34 @@ const dealCard = (cards, amount) => {
 }
 
 const simulatePlay = async () => {
+	const playerCount = 4
+	let i = 0
 	dealCard(dealer.cards, 2)
 	const { player_1, player_2, player_3, player_4 } = await generatePlayers(4)
-	;[player_1, player_2, player_3, player_4].map(async (player) => {
+	for (i; i < playerCount; i++) {
+		const player = [player_1, player_2, player_3, player_4][i]
 		dealCard(player.cards, 2)
-		await play(player)
-	})
+		const playerSurrendered = await play(player)
+		if (playerSurrendered) {
+			await playDealer(dealer)
+			const outcome = await getOutcome(player)
+			if (outcome[0] == 'END' || (player.cards_ && outcome[1] == 'END')) {
+				console.log(
+					`player${
+						i + 1
+					} surrendered with the Dealer actually having a blackjack`
+				)
+				console.log(`The Game has ended`)
+			}
+		}
+	}
+	i = 0
 	await playDealer(dealer)
-	;[player_1, player_2, player_3, player_4].map(async (player) => {
+	for (i; i < playerCount; i++) {
+		const player = [player_1, player_2, player_3, player_4][i]
 		await getOutcome(player)
-	})
+	}
+	i = 0
 }
 
 test.one('Blackjack works', async () => {

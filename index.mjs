@@ -78,16 +78,6 @@ const clovers = {
 	Q: 10,
 }
 
-const moves = ['Surrender', 'Continue']
-/**
- * Surrender:
- * A player takes back half of his bet,
- * and gives the dealer half,
- * with strong suspicion the dealer has blackjack, this prompts
- * the dealer to check his cards, if he does have blackjack,
- * he reveals his hand and the round ends
- */
-
 const choices = ['Hit', 'Stand']
 /**
  * Hit:
@@ -105,7 +95,7 @@ const choices = ['Hit', 'Stand']
  * A player doubles his bet, then is dealt an additional card, and is made to stand
  */
 
-const outcomes = ['Player Wins', 'Dealer Wins', 'Push', 'Blackjack Win']
+const outcomes = ['Player Wins', 'Dealer Wins', 'Push', 'Blackjack Win', 'Retrieve']
 /**
  * Player Wins:
  * A player's cards is equal or closer to 21 than the dealer's,
@@ -122,6 +112,11 @@ const outcomes = ['Player Wins', 'Dealer Wins', 'Push', 'Blackjack Win']
  * Push:
  * The dealer's cards is equal to a player's cards,
  * then there are no exchange of bets
+ */
+
+/**
+ * Retrieve:
+ * A player pays insurance and the Dealer does have a natural
  */
 
 const events = ['Bust', 'Split']
@@ -211,7 +206,6 @@ const cardValue = (cards) => {
 // Game Flow---------------------------------------------
 const startingBalance = reach.parseCurrency(1000)
 const accDealer = await reach.newTestAccount(reach.parseCurrency(10000))
-const bet = reach.parseCurrency(100)
 const ctc = accDealer.contract(backend)
 let playerSurrendered = false
 console.log("[+] Welcome to Apostrophe's Blackjack Game")
@@ -234,12 +228,12 @@ const generatePlayers = async (amount) => {
 			balance: async () => await balOf(acc),
 			cards: [],
 			cards_: [],
-			bet,
-			bet_: 0,
 			boughtInsurance: false,
 			boughtInsurance_: false,
 			surrendered: false,
 			surrendered_: false,
+			doubledDown: false,
+			doubledDown_: false,
 		})
 	}
 	return players
@@ -258,7 +252,6 @@ const play = async (player, who) => {
 	) {
 		// A split must occur
 		player.cards_.push(player.cards.pop())
-		player.bet_ = bet
 		console.log(`[+] ${who} just made a split`)
 		dealCard(player.cards, 1)
 		console.log(`[-] ${who} was dealt:`, player.cards[player.cards.length - 1])
@@ -274,6 +267,7 @@ const play = async (player, who) => {
 		Q: 'Q',
 		K: 'K',
 		A: 'A',
+		10: '10',
 	}
 	if (cardValue(player.cards) != 21) {
 		if (dealerFirstCard in tenCardsNA) {
@@ -299,7 +293,7 @@ const play = async (player, who) => {
 				) {
 					const doubleDown = Math.floor(Math.random() * 2)
 					if (doubleDown) {
-						player.bet *= 2
+						player.doubledDown = true
 						dealCard(player.cards, 1)
 						console.log(`[+] ${who} doubled down`)
 						console.log(
@@ -328,7 +322,11 @@ const play = async (player, who) => {
 					break
 				}
 			}
-			console.log(`[+] ${who}'s card value is ${value}`)
+			console.log(
+				`[+] ${who}'s card value is ${value}${
+					value > 21 ? `, It's a Bust!` : ''
+				}`
+			)
 		}
 	} else {
 		console.log(`[+] ${who} stood`)
@@ -358,7 +356,7 @@ const play = async (player, who) => {
 					) {
 						const doubleDown = Math.floor(Math.random() * 2)
 						if (doubleDown) {
-							player.bet_ *= 2
+							player.doubledDown_ = true
 							dealCard(player.cards_, 1)
 							console.log(`[+] ${who} doubled down on his second hand`)
 							console.log(
@@ -387,7 +385,11 @@ const play = async (player, who) => {
 						break
 					}
 				}
-				console.log(`[+] ${who}'s second hand card value is ${value}`)
+				console.log(
+					`[+] ${who}'s second hand card value is ${value}${
+						value > 21 ? `, It's a Bust!` : ''
+					}`
+				)
 			}
 		} else {
 			console.log(`[+] ${who} stood his second hand`)
@@ -451,11 +453,11 @@ const playDealer = async (dealer, onSurrender) => {
 }
 
 const getOutcome = async (player, who) => {
-	if (player.cards_.length) {
-		if (player.surrendered && player.surrendered_) return
-	} else {
-		if (player.surrendered) return
-	}
+	// if (player.cards_.length) {
+	// 	if (player.surrendered && player.surrendered_) return
+	// } else {
+	// 	if (player.surrendered) return
+	// }
 	const outcome = []
 	if (!player.cards_.length) {
 		try {
@@ -463,15 +465,11 @@ const getOutcome = async (player, who) => {
 			const byteResponse = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards),
 				player.cards.length,
-				player.bet,
 				player.boughtInsurance,
-				player.surrendered
+				player.surrendered,
+				player.doubledDown
 			)
-			console.log(
-				`[-] ${who} pays his wager of ${fmt(player.bet)} ${
-					reach.standardUnit
-				}, and awaits his outcome`
-			)
+			console.log(`[-] ${who} pays his wager, and awaits his outcome`)
 			const response = noneNull(byteResponse)
 			outcome.push(response)
 		} catch (error) {
@@ -483,29 +481,23 @@ const getOutcome = async (player, who) => {
 			const byteResponse = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards),
 				player.cards.length,
-				player.bet,
 				player.boughtInsurance,
-				player.surrendered
+				player.surrendered,
+				player.doubledDown
 			)
-			console.log(
-				`[-] ${who} pays his wager of ${fmt(player.bet)} ${
-					reach.standardUnit
-				}, and awaits his outcome`
-			)
+			console.log(`[-] ${who} pays his wager, and awaits his outcome`)
 			const response = noneNull(byteResponse)
 			outcome.push(response)
 			console.log(`${who}'s second hand is:`, player.cards_)
 			const byteResponse_ = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards_),
 				player.cards_.length,
-				player.bet_,
 				player.boughtInsurance_,
-				player.surrendered_
+				player.surrendered_,
+				player.doubledDown_
 			)
 			console.log(
-				`[-] ${who} pays his second wager of ${fmt(player.bet)} ${
-					reach.standardUnit
-				}, and awaits his second outcome`
+				`[-] ${who} pays his second wager, and awaits his second outcome`
 			)
 			const response_ = noneNull(byteResponse_)
 			outcome.push(response_)
@@ -585,6 +577,11 @@ const simulatePlay = async (amount, cardCount) => {
 	console.log("[+] The Dealer's hand", dealer.cards)
 	for (i; i < playerCount; i++) {
 		const player = players[i]
+		if (player.cards_.length) {
+			if (player.surrendered && player.surrendered_) continue
+		} else {
+			if (player.surrendered) continue
+		}
 		console.log(
 			`[-] Player_${i + 1}'s balance before submitting:`,
 			await player.balance(),
@@ -604,12 +601,18 @@ console.log('[+] Starting the Game...')
 reach.withDisconnect(() =>
 	dealer.ctc.p.D({
 		bankAmount: reach.parseCurrency(900),
-		deployed: async () => {
+		betAmount: reach.parseCurrency(100),
+		deployed: async (betAmount) => {
 			console.log('[+] Blackjack started')
 			console.log(
 				'[+] The Bank currently has',
 				fmt((await dealer.ctc.v.bank())[1]),
 				reach.standardUnit
+			)
+			console.log(
+				`[+] The Dealer publishes the base bet: ${fmt(betAmount)} ${
+					reach.standardUnit
+				}`
 			)
 			await simulatePlay(4, 2)
 			console.log(

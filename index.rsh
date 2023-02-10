@@ -1,6 +1,7 @@
 'reach 0.1'
 
 const outcome = Bytes(20)
+const minimumBankBalance = (amt) => (amt + amt / 2) * 4
 
 const [isOutcome, P_WINS, D_WINS, PUSH, RETRIEVE, BLACKJACK, END] = makeEnum(6)
 const getOutcome = (
@@ -51,15 +52,42 @@ const getOutcome = (
 		return D_WINS
 	}
 }
+/**
+ *  dealerHand,
+	dealerCount,
+	cardValue,
+	cardCount,
+	boughtInsurance,
+	surrendered
+ */
+assert(getOutcome(21, 2, 17, 3, false, false) == D_WINS)
+assert(getOutcome(21, 3, 21, 4, false, false) == PUSH)
+assert(getOutcome(12, 2, 13, 5, false, false) == P_WINS)
+assert(getOutcome(21, 2, 14, 4, true, false) == RETRIEVE)
+assert(getOutcome(20, 4, 21, 2, false, false) == BLACKJACK)
+assert(getOutcome(21, 2, 9, 2, false, true) == END)
+assert(getOutcome(20, 4, 20, 5, false, false) == PUSH)
+forall(UInt, (w) =>
+	forall(UInt, (x) =>
+		forall(UInt, (y) =>
+			forall(UInt, (z) =>
+				forall(Bool, (a) =>
+					forall(Bool, (b) => assert(isOutcome(getOutcome(w, x, y, z, a, b))))
+				)
+			)
+		)
+	)
+)
 
 export const main = Reach.App(() => {
 	const D = Participant('D', {
 		bankAmount: UInt,
-		deployed: Fun([], Null),
+		betAmount: UInt,
+		deployed: Fun([UInt], Null),
 	})
 
 	const Player = API('Player', {
-		getOutcome: Fun([UInt, UInt, UInt, Bool, Bool], outcome),
+		getOutcome: Fun([UInt, UInt, Bool, Bool, Bool], outcome),
 	})
 
 	const Dealer = API('Dealer', {
@@ -73,27 +101,47 @@ export const main = Reach.App(() => {
 
 	D.only(() => {
 		const bankAmount = declassify(interact.bankAmount)
+		const betAmount = declassify(interact.betAmount)
 	})
-	D.publish(bankAmount)
+	D.publish(bankAmount, betAmount)
 	commit()
 	D.pay(bankAmount)
-	D.interact.deployed()
+	D.interact.deployed(betAmount)
 
-	const [bets, keepGoing, dealerHand, dealerCount] = parallelReduce([
+	const [bank, keepGoing, dealerHand, dealerCount, hasDealt] = parallelReduce([
 		bankAmount,
 		true,
 		0,
 		0,
+		false,
 	])
-		.invariant(balance() == bets)
+		.invariant(balance() == bank)
 		.define(() => {
-			Bank.bank.set(bets)
+			Bank.bank.set(bank)
 		})
 		.while(keepGoing)
 		.api_(
 			Player.getOutcome,
-			(cardValue, cardCount, bet_, boughtInsurance, surrendered) => {
-				const bet = boughtInsurance ? bet_ * 2 : surrendered ? bet_ / 2 : bet_
+			(cardValue, cardCount, boughtInsurance, surrendered, doubledDown) => {
+				check(hasDealt, 'The Dealer is yet to submit his hand')
+				check(cardCount > 0 && cardValue > 0, 'Invalid submission')
+				check(
+					(boughtInsurance && !surrendered) ||
+						(!boughtInsurance && surrendered) ||
+						(!boughtInsurance && !surrendered),
+					'You cannot surrender and still have insurance'
+				)
+				check(
+					bank >= betAmount + betAmount / 2,
+					'The Bank cannot accommodate your bet'
+				)
+				const bet = boughtInsurance
+					? betAmount * (doubledDown ? 4 : 2)
+					: surrendered
+					? betAmount / 2
+					: doubledDown
+					? betAmount * 2
+					: betAmount
 				return [
 					bet,
 					(ret) => {
@@ -109,38 +157,75 @@ export const main = Reach.App(() => {
 							const prize = bet * 2
 							if (balance() >= prize) transfer(prize).to(this)
 							ret(outcome.pad('Player Wins'))
-							return [balance(), keepGoing, dealerHand, dealerCount]
+							return [
+								bank - bet,
+								// This is because a player may buy insurance and double down
+								bank >= minimumBankBalance(betAmount),
+								dealerHand,
+								dealerCount,
+								hasDealt,
+							]
 						} else if (result == D_WINS) {
 							ret(outcome.pad('Dealer Wins'))
-							return [balance(), keepGoing, dealerHand, dealerCount]
+							return [
+								bank + bet,
+								bank >= minimumBankBalance(betAmount),
+								dealerHand,
+								dealerCount,
+								hasDealt,
+							]
 						} else if (result == PUSH) {
-							if (balance() >= (boughtInsurance ? bet / 2 : bet))
-								transfer(boughtInsurance ? bet / 2 : bet).to(this)
+							if (balance() >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Push'))
-							return [balance(), keepGoing, dealerHand, dealerCount]
+							return [
+								bank,
+								bank >= minimumBankBalance(betAmount),
+								dealerHand,
+								dealerCount,
+								hasDealt,
+							]
 						} else if (result == RETRIEVE) {
 							if (boughtInsurance && balance() >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Retrieve'))
-							return [balance(), keepGoing, dealerHand, dealerCount]
+							return [
+								bank,
+								bank >= minimumBankBalance(betAmount),
+								dealerHand,
+								dealerCount,
+								hasDealt,
+							]
 						} else if (result == BLACKJACK) {
 							if (balance() >= bet + bet + bet / 2)
 								transfer(bet + bet + bet / 2).to(this)
 							ret(outcome.pad('Blackjack'))
-							return [balance(), keepGoing, dealerHand, dealerCount]
+							return [
+								bank - (bet + bet / 2),
+								bank >= minimumBankBalance(betAmount),
+								dealerHand,
+								dealerCount,
+								hasDealt,
+							]
 						} else {
 							ret(outcome.pad('End'))
-							return [balance(), keepGoing, dealerHand, dealerCount]
+							return [
+								bank + bet,
+								bank >= minimumBankBalance(betAmount),
+								dealerHand,
+								dealerCount,
+								hasDealt,
+							]
 						}
 					},
 				]
 			}
 		)
 		.api_(Dealer.submitHand, (cardValue, cardCount) => {
+			check(cardCount > 0 && cardValue > 0, 'Invalid submission')
 			return [
 				0,
 				(ret) => {
 					ret(null)
-					return [bets, keepGoing, cardValue, cardCount]
+					return [bank, keepGoing, cardValue, cardCount, true]
 				},
 			]
 		})

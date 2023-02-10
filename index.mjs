@@ -403,6 +403,7 @@ const playDealer = async (dealer, onSurrender) => {
 			`[+] Dealer has a natural, as his second card is:`,
 			dealer.cards[1]
 		)
+		console.log(`[+] Dealer's card value is`, String(cardValue(dealer.cards)))
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),

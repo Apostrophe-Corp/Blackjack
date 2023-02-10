@@ -323,7 +323,7 @@ const play = async (player, who) => {
 			console.log(`[+] ${who}'s card value is ${value}`)
 		}
 	}
-	if (player.cards_) {
+	if (player.cards_.length) {
 		if (cardValue(player.cards_) != 21) {
 			const move = moves[Math.floor(Math.random() * moves.length)]
 			if (dealerFirstCard == 'A') {
@@ -420,7 +420,7 @@ const playDealer = async (dealer) => {
 
 const getOutcome = async (player, who) => {
 	const outcome = []
-	if (!player.cards_) {
+	if (!player.cards_.length) {
 		try {
 			const byteResponse = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards),

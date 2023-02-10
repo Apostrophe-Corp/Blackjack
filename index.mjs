@@ -1,4 +1,4 @@
-import { loadStdlib } from '@reach-sh/stdlib'
+import { test, loadStdlib } from '@reach-sh/stdlib'
 import * as backend from './build/index.main.mjs'
 const reach = loadStdlib()
 
@@ -264,7 +264,8 @@ const play = async (player) => {
 	if (player.cards[0][0] == player.cards[1][0]) {
 		// A split must occur
 		player.cards_.push(player.cards.pop())
-		// TODO call a function for the dealer to deal to the player's second hand
+		dealCard(player.cards, 1)
+		dealCard(player.cards_, 1)
 		player.bet_ = bet
 	}
 	const dealerFirstCard = dealer.cards[0][0]
@@ -286,12 +287,12 @@ const play = async (player) => {
 			while (keepPlaying && value < 21) {
 				const choice = choices[Math.floor(Math.random() * choices.length)]
 				if (choice == 'Hit') {
-					// TODO call a function to have the dealer deal another card
+					dealCard(player.cards, 1)
 				} else if (choice == 'Stand') {
 					break
 				} else if (choice == 'Double Down') {
 					player.bet *= 2
-					// TODO call a function to have the dealer deal another card
+					dealCard(player.cards, 1)
 					break
 				}
 				value = cardValue(player.cards)
@@ -317,12 +318,12 @@ const play = async (player) => {
 				while (keepPlaying && value < 21) {
 					const choice = choices[Math.floor(Math.random() * choices.length)]
 					if (choice == 'Hit') {
-						// TODO call a function to have the dealer deal another card
+						dealCard(player.cards_, 1)
 					} else if (choice == 'Stand') {
 						break
 					} else if (choice == 'Double Down') {
 						player.bet_ *= 2
-						// TODO call a function to have the dealer deal another card
+						dealCard(player.cards_, 1)
 						break
 					}
 					value = cardValue(player.cards_)
@@ -337,69 +338,35 @@ const playDealer = async (dealer) => {
 		// Possible blackjack win
 		// TODO Submit the dealers hand
 		try {
-			await dealer.ctc.apis.Dealer.submitHand(dealer.cards, dealer.cards.length)
-        } catch (error) {
-            console.log({error})
-        }
-		return
-	}
-	const move = moves[Math.floor(Math.random() * moves.length)]
-	if (move == 'Buy Insurance') {
-		dealer.bet *= 2
-		dealer.boughtInsurance = true
-	} else if (move == 'Surrender') {
-		dealer.surrendered = true
-		// TODO call function to handle surrender
-		keepPlaying = false
-	}
-	if (move != 'Surrender') {
+			await dealer.ctc.apis.Dealer.submitHand(
+				cardValue(dealer.cards),
+				dealer.cards.length
+			)
+		} catch (error) {
+			console.log({ error })
+		}
+	} else {
 		let value = cardValue(dealer.cards)
 		let keepPlaying = true
 		while (keepPlaying && value < 21) {
-			const choice = choices[Math.floor(Math.random() * choices.length)]
-			if (choice == 'Hit') {
-				// TODO call a function to have the dealer deal another card
-			} else if (choice == 'Stand') {
-				break
-			} else if (choice == 'Double Down') {
-				dealer.bet *= 2
-				// TODO call a function to have the dealer deal another card
+			const choice = Math.floor(Math.random() * 2)
+			if (choice) {
+				dealCard(dealer.cards, 1)
+			} else {
 				break
 			}
 			value = cardValue(dealer.cards)
 		}
-	}
-
-	if (dealer.cards_) {
-		if (cardValue(dealer.cards_) != 21) {
-			const move = moves[Math.floor(Math.random() * moves.length)]
-			if (move == 'Buy Insurance') {
-				dealer.bet_ *= 2
-				dealer.boughtInsurance_ = true
-			} else if (move == 'Surrender') {
-				dealer.surrendered_ = true
-				// TODO call function to handle surrender
-				keepPlaying = false
-			}
-			if (move != 'Surrender') {
-				let value = cardValue(dealer.cards_)
-				let keepPlaying = true
-				while (keepPlaying && value < 21) {
-					const choice = choices[Math.floor(Math.random() * choices.length)]
-					if (choice == 'Hit') {
-						// TODO call a function to have the dealer deal another card
-					} else if (choice == 'Stand') {
-						break
-					} else if (choice == 'Double Down') {
-						dealer.bet_ *= 2
-						// TODO call a function to have the dealer deal another card
-						break
-					}
-					value = cardValue(dealer.cards_)
-				}
-			}
+		try {
+			await dealer.ctc.apis.Dealer.submitHand(
+				cardValue(dealer.cards),
+				dealer.cards.length
+			)
+		} catch (error) {
+			console.log({ error })
 		}
 	}
+	return
 }
 
 const getOutcome = async (player) => {
@@ -456,10 +423,37 @@ const getOutcome = async (player) => {
 		  ]
 }
 
-const simulatePlay = async () => {
-	const { player_1, player_2, player_3, player_4 } = await generatePlayers(4)
-	await play(player_1)
-	await play(player_2)
-	await play(player_3)
-	await play(player_4)
+const dealCard = (cards, amount) => {
+	let i = 0
+	for (i; i < amount; i++) {
+		cards.push(initialDeck.shift())
+	}
 }
+
+const simulatePlay = async () => {
+	dealCard(dealer.cards, 2)
+	const { player_1, player_2, player_3, player_4 } = await generatePlayers(4)
+	;[player_1, player_2, player_3, player_4].map(async (player) => {
+		dealCard(player.cards, 2)
+		await play(player)
+	})
+	await playDealer(dealer)
+	;[player_1, player_2, player_3, player_4].map(async (player) => {
+		await getOutcome(player)
+	})
+}
+
+test.one('Blackjack works', async () => {
+	await Promise.all([
+		reach.withDisconnect(() =>
+			dealer.ctc.p.Dealer({
+				bankAmount: reach.parseCurrency(900),
+				deployed: async () => {
+					console.log('Blackjack started')
+					await simulatePlay()
+					reach.disconnect(null)
+				},
+			})
+		),
+	])
+})

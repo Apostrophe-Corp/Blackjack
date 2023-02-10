@@ -2,18 +2,6 @@
 
 const outcome = Bytes(20)
 
-const [isOut, P_WINS_, D_WINS_, DRAW] = makeEnum(3)
-const winner = (pTotal, dTotal) => {
-	if (pTotal > 21 || (dTotal < 22 && dTotal > pTotal)) {
-		return D_WINS_
-	} else {
-		if (pTotal < 22 && (pTotal > dTotal || dTotal > 21)) {
-			return P_WINS_
-		} else if (pTotal == dTotal) {
-			return DRAW
-		} else return D_WINS_
-	}
-} // end of winner
 const [isOutcome, P_WINS, D_WINS, PUSH, RETRIEVE, BLACKJACK, END] = makeEnum(6)
 const getOutcome = (
 	dealerHand,
@@ -59,15 +47,6 @@ const getOutcome = (
 		return D_WINS
 	}
 }
-assert(winner(20, 21) == D_WINS_)
-assert(winner(22, 15) == D_WINS_)
-assert(winner(19, 17) == P_WINS_)
-assert(winner(21, 20) == P_WINS_)
-assert(winner(14, 25) == P_WINS_)
-assert(winner(18, 18) == DRAW)
-assert(winner(21, 21) == DRAW)
-assert(winner(22, 22) == D_WINS_)
-forall(UInt, (x) => forall(UInt, (y) => assert(isOut(winner(x, y)))))
 
 export const main = Reach.App(() => {
 	const D = Participant('D', {
@@ -81,6 +60,10 @@ export const main = Reach.App(() => {
 
 	const Dealer = API('Dealer', {
 		submitHand: Fun([UInt, UInt], Null),
+	})
+
+	const Bank = View({
+		bank: UInt,
 	})
 	init()
 
@@ -99,6 +82,9 @@ export const main = Reach.App(() => {
 		0,
 	])
 		.invariant(balance() == bets)
+		.define(() => {
+			Bank.bank.set(bets)
+		})
 		.while(keepGoing)
 		.api_(
 			Player.getOutcome,

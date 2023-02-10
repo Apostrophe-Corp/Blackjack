@@ -222,12 +222,12 @@ const dealer = {
 }
 console.log('[+] The Dealer is ready')
 const generatePlayers = async (amount) => {
-	const players = {}
+	const players = []
 	let i = 0
 	for (i; i < amount; i++) {
 		const acc = await reach.newTestAccount(startingBalance)
 		const ctc = acc.contract(backend, dealer.ctc.getInfo())
-		players[`player_${i + 1}`] = {
+		players.push({
 			account: acc,
 			ctc,
 			balance: async () => await balOf(acc),
@@ -239,7 +239,7 @@ const generatePlayers = async (amount) => {
 			boughtInsurance_: false,
 			surrendered: false,
 			surrendered_: false,
-		}
+		})
 	}
 	return players
 }
@@ -257,10 +257,15 @@ const play = async (player, who) => {
 	) {
 		// A split must occur
 		player.cards_.push(player.cards.pop())
-		dealCard(player.cards, 1)
-		dealCard(player.cards_, 1)
 		player.bet_ = bet
 		console.log(`[+]${who} just made a split`)
+		dealCard(player.cards, 1)
+		console.log(`[-] ${who} was dealt:`, player.cards[player.cards.length - 1])
+		dealCard(player.cards_, 1)
+		console.log(
+			`[-] ${who}'s second hand was dealt:`,
+			player.cards_[player.cards_.length - 1]
+		)
 	}
 	const dealerFirstCard = dealer.cards[0][0]
 	if (cardValue(player.cards) != 21) {
@@ -292,19 +297,28 @@ const play = async (player, who) => {
 						player.bet *= 2
 						dealCard(player.cards, 1)
 						console.log(`[+]${who} doubled down`)
+						console.log(
+							`[-] ${who} was dealt:`,
+							player.cards[player.cards.length - 1]
+						)
 						break
 					}
 				}
 				if (choice == 'Hit') {
+					if(cardValue(player.cards) == 20) break
 					dealCard(player.cards, 1)
 					console.log(`[+]${who} called for a hit`)
+					console.log(
+						`[-] ${who} was dealt:`,
+						player.cards[player.cards.length - 1]
+					)
 				} else if (choice == 'Stand') {
 					console.log(`[+]${who} stood`)
 					break
 				}
 				value = cardValue(player.cards)
 			}
-			console.log(`[+]${who}'s second card value is ${value}`)
+			console.log(`[+]${who}'s card value is ${value}`)
 		}
 	}
 	if (player.cards_) {
@@ -315,12 +329,12 @@ const play = async (player, who) => {
 				if (buyInsurance) {
 					player.bet_ *= 2
 					player.boughtInsurance_ = true
-					console.log(`[+]${who} bought insurance`)
+					console.log(`[+]${who} bought insurance for his second hand`)
 				}
 			} else if (move == 'Surrender') {
 				player.surrendered_ = true
 				result = true
-				console.log(`[+]${who} surrendered`)
+				console.log(`[+]${who} surrendered his second hand`)
 			}
 			if (move != 'Surrender') {
 				let value = cardValue(player.cards_)
@@ -336,12 +350,24 @@ const play = async (player, who) => {
 						if (doubleDown) {
 							player.bet_ *= 2
 							dealCard(player.cards_, 1)
+							console.log(`[+] ${who} doubled down on his second hand`)
+							console.log(
+								`[-] ${who}'s second hand was dealt:`,
+								player.cards_[player.cards_.length - 1]
+							)
 							break
 						}
 					}
 					if (choice == 'Hit') {
+					if(cardValue(player.cards_) == 20) break
 						dealCard(player.cards_, 1)
+						console.log(`[+] ${who} called for a hit on his second hand`)
+						console.log(
+							`[-] ${who} was dealt:`,
+							player.cards_[player.cards_.length - 1]
+						)
 					} else if (choice == 'Stand') {
+						console.log(`[+] ${who} stood his second hand`)
 						break
 					}
 					value = cardValue(player.cards_)
@@ -438,22 +464,38 @@ const dealCard = (cards, amount) => {
 	}
 }
 
-const simulatePlay = async () => {
-	const playerCount = 4
-	let i = 0
-	dealCard(dealer.cards, 2)
-	const { player_1, player_2, player_3, player_4 } = await generatePlayers(4)
+const simulatePlay = async (amount, cardCount) => {
+	const playerCount = amount
+	let i = 0,
+		o = 0
+	const players = await generatePlayers(amount)
 	console.log('[+] Players are seated')
 	console.log('[+] Dealing their cards')
-	for (i; i < playerCount; i++) {
-		const player = [player_1, player_2, player_3, player_4][i]
-		dealCard(player.cards, 2)
+
+	for (o; o < cardCount; o++) {
+		for (i; i < playerCount; i++) {
+			const player = players[i]
+			dealCard(player.cards, 1)
+			console.log(
+				`[-] Player${i + 1} was dealt:`,
+				player.cards[player.cards.length - 1]
+			)
+		}
+		i = 0
+		console.log('[+] Dealing the Dealer')
+		dealCard(dealer.cards, 1)
 	}
-	i = 0
 	console.log('[+] Dealing complete')
-	console.log('[+] Player can now play')
+	console.log('[+] These are the initial cards')
 	for (i; i < playerCount; i++) {
-		const player = [player_1, player_2, player_3, player_4][i]
+		const player = players[i]
+		console.log(`[-] Player${i+1} has:`,player.cards)
+	}
+	console.log(`[+] The Dealer's visible card is:`, dealer.cards[0])
+	i =0
+	console.log('[+] Players can now play')
+	for (i; i < playerCount; i++) {
+		const player = players[i]
 		const playerSurrendered = await play(player, `Player_${i + 1}`)
 		if (playerSurrendered) {
 			await playDealer(dealer)
@@ -470,28 +512,30 @@ const simulatePlay = async () => {
 	}
 	i = 0
 	await playDealer(dealer)
+	console.log("The Dealer's hand", dealer.cards)
 	for (i; i < playerCount; i++) {
-		const player = [player_1, player_2, player_3, player_4][i]
+		const player = players[i]
 		const result = await getOutcome(player)
-		console.log('The outcome for Player_' + i + 1 + ' is:', result)
+		console.log(`The outcome for Player_${i + 1} is:`, result)
 	}
 	i = 0
 }
 console.log('[+] Starting the Game...')
-const startGame = async () => {
-	return await reach.withDisconnect(() =>
-		dealer.ctc.p.D({
-			bankAmount: reach.parseCurrency(900),
-			deployed: async () => {
-				console.log('[+] Blackjack started')
-				await simulatePlay()
-				reach.disconnect(null)
-			},
-		})
-	)
-}
-
-await new Promise((resolve) => async () => {
-	await startGame()
-	resolve()
-})
+reach.withDisconnect(() =>
+	dealer.ctc.p.D({
+		bankAmount: reach.parseCurrency(900),
+		deployed: async () => {
+			console.log('[+] Blackjack started')
+			console.log(
+				'[+] The Bank is currently has',
+				fmt((await dealer.ctc.v.bank())[1])
+			)
+			await simulatePlay(4, 2)
+			console.log(
+				'[+] The Bank is left with',
+				fmt((await dealer.ctc.v.bank())[1])
+			)
+			reach.disconnect(null)
+		},
+	})
+)

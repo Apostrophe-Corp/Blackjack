@@ -2,3 +2,5 @@ build/*
 .reach/*
 .vscode/*
 *test.*
+Dockerfile
+.dockerignore

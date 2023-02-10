@@ -1,4 +1,4 @@
-import { test, loadStdlib } from '@reach-sh/stdlib'
+import { loadStdlib } from '@reach-sh/stdlib'
 import * as backend from './build/index.main.mjs'
 const reach = loadStdlib()
 
@@ -116,7 +116,8 @@ const outcomes = ['Player Wins', 'Dealer Wins', 'Push', 'Blackjack Win', 'Retrie
 
 /**
  * Retrieve:
- * A player pays insurance and the Dealer does have a natural
+ * A player pays insurance and the Dealer does have a natural,
+ * so his bet plus insurance is returned
  */
 
 const events = ['Bust', 'Split']
@@ -561,7 +562,7 @@ const simulatePlay = async (amount, cardCount) => {
 				await player.balance(),
 				reach.standardUnit
 			)
-			if (outcome[0] == 'END' || (player.cards_ && outcome[1] == 'END')) {
+			if (outcome[0] == 'End' || (player.cards_.length && outcome[1] == 'End')) {
 				console.log(
 					`[-] Player_${
 						i + 1

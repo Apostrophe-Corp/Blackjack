@@ -415,7 +415,7 @@ const playDealer = async (dealer, onSurrender) => {
 		console.log(
 			`[+] Dealer's card value is`,
 			String(cardValue(dealer.cards)),
-			`${value > 21 ? `, It's a Bust!` : ''}`
+			`${Number(cardValue(dealer.cards)) > 21 ? `, It's a Bust!` : ''}`
 		)
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(

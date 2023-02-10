@@ -149,6 +149,15 @@ export const main = Reach.App(() => {
 				]
 			}
 		)
+		.api_(Dealer.submitHand, (cardValue, cardCount) => {
+			return [
+				0,
+				(ret) => {
+					ret(null)
+					return [bets, keepGoing, cardValue, cardCount]
+				},
+			]
+		})
 	transfer(balance()).to(D)
 	commit()
 	exit()

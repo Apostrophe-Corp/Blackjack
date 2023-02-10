@@ -537,7 +537,7 @@ const simulatePlay = async (amount, cardCount) => {
 	console.log("The Dealer's hand", dealer.cards)
 	for (i; i < playerCount; i++) {
 		const player = players[i]
-		const result = await getOutcome(player)
+		const result = await getOutcome(player, `Player_${i + 1}`)
 		console.log(`The outcome for Player_${i + 1} is:`, result)
 	}
 	i = 0

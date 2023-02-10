@@ -383,10 +383,10 @@ const play = async (player, who) => {
 	return result
 }
 
-const playDealer = async (dealer) => {
+const playDealer = async (dealer, onSurrender) => {
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
-		console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
+		console.log(`[+] Dealer has a natural:`, dealer.cards[1])
 		try {
 			await dealer.ctc.apis.Dealer.submitHand(
 				cardValue(dealer.cards),
@@ -394,9 +394,9 @@ const playDealer = async (dealer) => {
 			)
 		} catch (error) {
 			console.log({ error })
-		}
+		}		
 	} else {
-		console.log(`[+] Dealer does not have a natural, as his second card is:`, dealer.cards[1])
+		if(onSurrender) return
 		let value = cardValue(dealer.cards)
 		let keepPlaying = true
 		while (keepPlaying && value < 21) {
@@ -513,7 +513,7 @@ const simulatePlay = async (amount, cardCount) => {
 		const player = players[i]
 		const playerSurrendered = await play(player, `Player_${i + 1}`)
 		if (playerSurrendered) {
-			await playDealer(dealer)
+			await playDealer(dealer, true)
 			const outcome = await getOutcome(player)
 			if (outcome[0] == 'END' || (player.cards_ && outcome[1] == 'END')) {
 				console.log(
@@ -526,7 +526,7 @@ const simulatePlay = async (amount, cardCount) => {
 		}
 	}
 	i = 0
-	await playDealer(dealer)
+	await playDealer(dealer, false)
 	console.log("The Dealer's hand", dealer.cards)
 	for (i; i < playerCount; i++) {
 		const player = players[i]

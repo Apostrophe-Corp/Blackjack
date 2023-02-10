@@ -95,7 +95,13 @@ const choices = ['Hit', 'Stand']
  * A player doubles his bet, then is dealt an additional card, and is made to stand
  */
 
-const outcomes = ['Player Wins', 'Dealer Wins', 'Push', 'Blackjack Win', 'Retrieve']
+const outcomes = [
+	'Player Wins',
+	'Dealer Wins',
+	'Push',
+	'Blackjack Win',
+	'Retrieve',
+]
 /**
  * Player Wins:
  * A player's cards is equal or closer to 21 than the dealer's,
@@ -419,6 +425,14 @@ const playDealer = async (dealer, onSurrender) => {
 	} else {
 		if (onSurrender) {
 			console.log(`[+] Dealer does not have a natural`)
+			try {
+				await dealer.ctc.apis.Dealer.submitHand(
+					cardValue(dealer.cards),
+					dealer.cards.length
+				)
+			} catch (error) {
+				console.log({ error })
+			}
 			return false
 		} else {
 			console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
@@ -562,7 +576,10 @@ const simulatePlay = async (amount, cardCount) => {
 				await player.balance(),
 				reach.standardUnit
 			)
-			if (outcome[0] == 'End' || (player.cards_.length && outcome[1] == 'End')) {
+			if (
+				outcome[0] == 'End' ||
+				(player.cards_.length && outcome[1] == 'End')
+			) {
 				console.log(
 					`[-] Player_${
 						i + 1

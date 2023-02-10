@@ -436,6 +436,7 @@ const getOutcome = async (player, who) => {
 	const outcome = []
 	if (!player.cards_.length) {
 		try {
+			console.log(`${who}'s hand is:`, player.cards)
 			const byteResponse = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards),
 				player.cards.length,
@@ -451,6 +452,7 @@ const getOutcome = async (player, who) => {
 		}
 	} else {
 		try {
+			console.log(`${who}'s hand is:`, player.cards)
 			const byteResponse = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards),
 				player.cards.length,
@@ -461,6 +463,7 @@ const getOutcome = async (player, who) => {
 			console.log(`[-] ${who} pays his wager of ${fmt(player.bet)} ${reach.standardUnit}, and awaits his outcome`)
 			const response = noneNull(byteResponse)
 			outcome.push(response)
+			console.log(`${who}'s second hand is:`, player.cards_)
 			const byteResponse_ = await player.ctc.apis.Player.getOutcome(
 				cardValue(player.cards_),
 				player.cards_.length,
@@ -498,7 +501,7 @@ const simulatePlay = async (amount, cardCount) => {
 			const player = players[i]
 			dealCard(player.cards, 1)
 			console.log(
-				`[-] Player${i + 1} was dealt:`,
+				`[-] Player_${i + 1} was dealt:`,
 				player.cards[player.cards.length - 1]
 			)
 		}
@@ -510,23 +513,25 @@ const simulatePlay = async (amount, cardCount) => {
 	console.log('[+] These are the initial cards')
 	for (i; i < playerCount; i++) {
 		const player = players[i]
-		console.log(`[-] Player${i+1} has:`,player.cards)
+		console.log(`[-] Player_${i+1} has:`,player.cards)
 	}
 	console.log(`[+] The Dealer's visible card is:`, dealer.cards[0])
 	i =0
-	console.log('[+] Players can now play')
+	console.log('[+] Players can now have their turns')
 	for (i; i < playerCount; i++) {
 		const player = players[i]
 		const playerSurrendered = await play(player, `Player_${i + 1}`)
 		if (playerSurrendered) {
-			const gameEnds = await playDealer(dealer, true)
+			await playDealer(dealer, true)
+			console.log(`[-] Player_${i + 1}'s balance before submitting:`, fmt(await player.balance()))
 			const outcome = await getOutcome(player, `Player_${i + 1}`)
+			console.log(`[-] Player_${i + 1}'s balance after submitting:`, fmt(await player.balance()))			
 			if (outcome[0] == 'END' || (player.cards_ && outcome[1] == 'END')) {
 				console.log(
 					`Player_${
 						i + 1
 					} surrendered with the Dealer actually having a blackjack`
-				)
+					)
 				console.log(`The Game has ended`)
 				return
 			}
@@ -537,8 +542,10 @@ const simulatePlay = async (amount, cardCount) => {
 	console.log("The Dealer's hand", dealer.cards)
 	for (i; i < playerCount; i++) {
 		const player = players[i]
+		console.log(`[-] Player_${i + 1}'s balance before submitting:`, fmt(await player.balance()))
 		const result = await getOutcome(player, `Player_${i + 1}`)
 		console.log(`The outcome for Player_${i + 1} is:`, result)
+		console.log(`[-] Player_${i + 1}'s balance after submitting:`, fmt(await player.balance()))
 	}
 	i = 0
 }

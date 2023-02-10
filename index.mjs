@@ -557,7 +557,7 @@ reach.withDisconnect(() =>
 		deployed: async () => {
 			console.log('[+] Blackjack started')
 			console.log(
-				'[+] The Bank is currently has',
+				'[+] The Bank currently has',
 				fmt((await dealer.ctc.v.bank())[1]), reach.standardUnit
 			)
 			await simulatePlay(4, 2)

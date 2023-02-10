@@ -119,31 +119,26 @@ export const main = Reach.App(() => {
 							const prize = bet * 2
 							if (balance() >= prize) transfer(prize).to(this)
 							ret(outcome.pad('Player Wins'))
-							return [bets - bet, keepGoing, dealerHand, dealerCount]
+							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else if (result == D_WINS) {
 							ret(outcome.pad('Dealer Wins'))
-							return [bets + bet, keepGoing, dealerHand, dealerCount]
+							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else if (result == PUSH) {
 							if (balance() >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Push'))
-							return [bets, keepGoing, dealerHand, dealerCount]
+							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else if (result == RETRIEVE) {
 							if (boughtInsurance && balance() >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Retrieve'))
-							return [bets, keepGoing, dealerHand, dealerCount]
+							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else if (result == BLACKJACK) {
 							if (balance() >= bet + bet + bet / 2)
 								transfer(bet + bet + bet / 2).to(this)
 							ret(outcome.pad('Blackjack'))
-							return [
-								bets - (bet + bet / 2),
-								keepGoing,
-								dealerHand,
-								dealerCount,
-							]
+							return [balance(), keepGoing, dealerHand, dealerCount]
 						} else {
 							ret(outcome.pad('End'))
-							return [bets, keepGoing, dealerHand, dealerCount]
+							return [balance(), keepGoing, dealerHand, dealerCount]
 						}
 					},
 				]

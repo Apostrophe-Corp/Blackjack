@@ -384,6 +384,7 @@ const play = async (player, who) => {
 }
 
 const playDealer = async (dealer) => {
+	console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
 		try {
@@ -401,7 +402,13 @@ const playDealer = async (dealer) => {
 			const choice = Math.floor(Math.random() * 2)
 			if (choice) {
 				dealCard(dealer.cards, 1)
+				console.log(`[+] Dealer called for a hit`)
+				console.log(
+							`[-] Dealer was dealt:`,
+							dealer.cards[dealer.cards.length - 1]
+						)
 			} else {
+				console.log(`[+] Dealer has stood`)
 				break
 			}
 			value = cardValue(dealer.cards)

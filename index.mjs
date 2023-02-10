@@ -593,7 +593,6 @@ const simulatePlay = async (amount, cardCount) => {
 						i + 1
 					} surrendered with the Dealer actually having a blackjack`
 				)
-				console.log(`The Game has ended`)
 				return
 			}
 		}
@@ -641,6 +640,7 @@ reach.withDisconnect(() =>
 				}`
 			)
 			await simulatePlay(4, 2)
+			console.log(`[+] The Game has ended`)
 			console.log(
 				'[+] The Bank is left with',
 				fmt((await dealer.ctc.v.bank())[1]),

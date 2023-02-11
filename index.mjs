@@ -331,7 +331,7 @@ const play = async (player, who) => {
 	if (cardValue(player.cards) != 21) {
 		if (dealerFirstCard in tenCardsNA) {
 			const move = Math.floor(Math.random() * 3)
-			if (move == 0) {
+			if (move == 0 && !playerSurrendered) {
 				player.boughtInsurance = true
 				console.log(`[+] ${who} bought insurance`)
 			} else if (move == 1 && !playerSurrendered) {

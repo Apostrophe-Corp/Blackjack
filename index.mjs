@@ -146,19 +146,22 @@ const events = ['Bust', 'Split']
  */
 
 /**
- * Takes in four stacks of unique 13 cards each and shuffles then into a deck of 52 cards
+ * Takes in four stacks of 13 unique cards each and shuffles then into a deck of 52 cards
  * @param {Object} hearts An Object representing a stack of Hearts
  * @param {Object} diamonds An Object representing a stack of Diamonds
  * @param {Object} spades An Object representing a stack of Spades
  * @param {Object} clovers An Object representing a stack of Clovers
- * @returns An array representing a shuffled deck of 52 cards
+ * @returns An array representing a shuffled deck of 52 cards if the length of each stack were exactly 13, else returns an empty array
  */
 const shuffleDeck = (hearts, diamonds, spades, clovers) => {
-	const newDeck = []
 	const heartKeys = Object.keys(hearts)
 	const diamondKeys = Object.keys(diamonds)
 	const spadeKeys = Object.keys(spades)
 	const cloverKeys = Object.keys(clovers)
+
+	if(heartKeys.length != 13 || diamondKeys.length != 13 || spadeKeys.length != 13 || cloverKeys.length != 13) return []
+
+	const newDeck = []
 	let deckLength =
 		heartKeys.length + diamondKeys.length + spadeKeys.length + cloverKeys.length
 	const deck = [heartKeys, diamondKeys, spadeKeys, cloverKeys]
@@ -599,7 +602,6 @@ const dealCard = (cards = {}, amount = 1) => {
  * @returns undefined
  */
 const simulatePlay = async (playerCount = 4, cardCount = 2) => {
-	const playerCount = playerCount
 	let i = 0,
 		o = 0
 	const players = await generatePlayers(playerCount)

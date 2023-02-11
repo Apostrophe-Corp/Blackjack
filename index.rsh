@@ -115,7 +115,7 @@ export const main = Reach.App(() => {
 		0,
 		false,
 	])
-		.invariant(balance() == bank)
+		.invariant(bank == balance())
 		.define(() => {
 			Bank.bank.set(bank)
 		})
@@ -155,7 +155,7 @@ export const main = Reach.App(() => {
 						)
 						if (result == P_WINS) {
 							const prize = bet * 2
-							if (balance() >= prize) transfer(prize).to(this)
+							if (bank + bet >= prize) transfer(prize).to(this)
 							ret(outcome.pad('Player Wins'))
 							return [
 								bank - bet,
@@ -175,7 +175,7 @@ export const main = Reach.App(() => {
 								hasDealt,
 							]
 						} else if (result == PUSH) {
-							if (balance() >= bet) transfer(bet).to(this)
+							if (bank + bet >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Push'))
 							return [
 								bank,
@@ -185,7 +185,7 @@ export const main = Reach.App(() => {
 								hasDealt,
 							]
 						} else if (result == RETRIEVE) {
-							if (boughtInsurance && balance() >= bet) transfer(bet).to(this)
+							if (boughtInsurance && bank + bet >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Retrieve'))
 							return [
 								bank,
@@ -195,7 +195,7 @@ export const main = Reach.App(() => {
 								hasDealt,
 							]
 						} else if (result == BLACKJACK) {
-							if (balance() >= bet + bet + bet / 2)
+							if (bank + bet >= bet + bet + bet / 2)
 								transfer(bet + bet + bet / 2).to(this)
 							ret(outcome.pad('Blackjack'))
 							return [

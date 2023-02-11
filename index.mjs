@@ -367,7 +367,10 @@ const play = async (player, who) => {
 					choice == 'Hit' ||
 					(dealerFirstCard in tenCardsNA && cardValue(player.cards) <= 10)
 				) {
-					if (cardValue(player.cards) == 20) break
+					if (cardValue(player.cards) == 20) {
+						console.log(`[+] ${who} stood`)
+						break
+					}
 					dealCard(player.cards, 1)
 					console.log(`[+] ${who} called for a hit`)
 					console.log(

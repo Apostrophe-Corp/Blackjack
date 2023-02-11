@@ -159,7 +159,13 @@ const shuffleDeck = (hearts, diamonds, spades, clovers) => {
 	const spadeKeys = Object.keys(spades)
 	const cloverKeys = Object.keys(clovers)
 
-	if(heartKeys.length != 13 || diamondKeys.length != 13 || spadeKeys.length != 13 || cloverKeys.length != 13) return []
+	if (
+		heartKeys.length != 13 ||
+		diamondKeys.length != 13 ||
+		spadeKeys.length != 13 ||
+		cloverKeys.length != 13
+	)
+		return []
 
 	const newDeck = []
 	let deckLength =

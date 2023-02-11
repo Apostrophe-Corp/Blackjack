@@ -662,8 +662,9 @@ const simulatePlay = async (playerCount = 4, cardCount = 2) => {
 				console.log(
 					`[-] Player_${
 						i + 1
-					} surrendered with the Dealer actually having a blackjack`
+					} surrendered with the Dealer actually having a natural`
 				)
+				console.log("[+] The Dealer's hand", dealer.cards)
 				return
 			}
 		}

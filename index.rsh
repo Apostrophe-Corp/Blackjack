@@ -22,6 +22,8 @@ const getOutcome = (
 		} else {
 			return D_WINS
 		}
+	} else if (surrendered) {
+		return D_WINS
 	} else if (dealerHand > 21) {
 		if (cardValue < 22) {
 			if (cardValue == 21 && cardCount == 2) {

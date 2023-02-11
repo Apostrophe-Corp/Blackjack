@@ -670,6 +670,8 @@ const simulatePlay = async (playerCount = 4, cardCount = 2) => {
 				)
 				console.log("[+] The Dealer's hand", dealer.cards)
 				return
+			} else {
+				console.log('[+] The Game continues')
 			}
 		}
 	}

@@ -2,6 +2,11 @@ import { loadStdlib } from '@reach-sh/stdlib'
 import * as backend from './build/index.main.mjs'
 const reach = loadStdlib()
 
+/**
+ * Converts a Byte input to String, stripping it of any null character
+ * @param {Byte} byte A Byte value
+ * @returns A String value without null characters
+ */
 const noneNull = (byte) => {
 	let string = '',
 		i = 0
@@ -140,6 +145,14 @@ const events = ['Bust', 'Split']
  * 1 for each hand
  */
 
+/**
+ * Takes in four stacks of unique 13 cards each and shuffles then into a deck of 52 cards
+ * @param {Object} hearts An Object representing a stack of Hearts
+ * @param {Object} diamonds An Object representing a stack of Diamonds
+ * @param {Object} spades An Object representing a stack of Spades
+ * @param {Object} clovers An Object representing a stack of Clovers
+ * @returns An array representing a shuffled deck of 52 cards
+ */
 const shuffleDeck = (hearts, diamonds, spades, clovers) => {
 	const newDeck = []
 	const heartKeys = Object.keys(hearts)
@@ -162,11 +175,22 @@ const shuffleDeck = (hearts, diamonds, spades, clovers) => {
 	}
 	return newDeck
 }
+
 const initialDeck = shuffleDeck(hearts, diamonds, spades, clovers)
 
+/**
+ * Formats BigNumber microalgos to Algos in String
+ * @param {BigNumber} x A BigNumber value of microalgos
+ * @returns A formatted Algo value in String
+ */
 const fmt = (x) => reach.formatCurrency(x, 4)
 const balOf = async (who) => fmt(await reach.balanceOf(who))
 
+/**
+ * Calculates the value of a Player's cards at hand
+ * @param {Array[Array[Number | String]]} cards An array of arrays representing a player's cards
+ * @returns The value of a Player's cards at hand
+ */
 const cardValue = (cards) => {
 	if (!cards.length) return cards.length
 	const faces = {
@@ -223,6 +247,12 @@ const dealer = {
 	cards: [],
 }
 console.log('[+] The Dealer is ready')
+
+/**
+ * Generates any amount of Players for the game
+ * @param {Number} amount The amount of players to be generated
+ * @returns An array of player objects
+ */
 const generatePlayers = async (amount) => {
 	const players = []
 	let i = 0
@@ -246,6 +276,12 @@ const generatePlayers = async (amount) => {
 	return players
 }
 
+/**
+ * Simulates play for a Player at the Table
+ * @param {Object} player A player object representing a player on the table
+ * @param {String} who The player identifier
+ * @returns True if the player surrendered, but if not, false
+ */
 const play = async (player, who) => {
 	let result = false
 	if (cardValue(player.cards) == 21) {
@@ -405,7 +441,13 @@ const play = async (player, who) => {
 	return result
 }
 
-const playDealer = async (dealer, onSurrender) => {
+/**
+ * Simulates play for the Dealer
+ * @param {Object} dealer A dealer object representing the Dealer
+ * @param {Boolean} onSurrender A boolean indicating if the Dealer was called to check his cards due a player surrendering
+ * @returns True if the Dealer had a natural, but if not, false
+ */
+const playDealer = async (dealer, onSurrender = false) => {
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
 		console.log(
@@ -475,6 +517,12 @@ const playDealer = async (dealer, onSurrender) => {
 	}
 }
 
+/**
+ * Gets the outcome of a player's submission
+ * @param {Object} player A player object representing a player on the table
+ * @param {String} who The player identifier
+ * @returns A string array representing the outcome of a player's submission
+ */
 const getOutcome = async (player, who) => {
 	// if (player.cards_.length) {
 	// 	if (player.surrendered && player.surrendered_) return
@@ -531,18 +579,29 @@ const getOutcome = async (player, who) => {
 	return outcome
 }
 
-const dealCard = (cards, amount) => {
+/**
+ * Deals cards to those at the table
+ * @param {Array[Array[Number | String]]} cards An array of arrays representing a player's cards
+ * @param {Number} amount The amount of cards to be dealt at a time
+ */
+const dealCard = (cards = {}, amount = 1) => {
 	let i = 0
 	for (i; i < amount; i++) {
 		cards.push(initialDeck.shift())
 	}
 }
 
-const simulatePlay = async (amount, cardCount) => {
-	const playerCount = amount
+/**
+ * Simulates the Game
+ * @param {Number} playerCount The number of players to be simulated for the game
+ * @param {Number} cardCount The amount of cards to be dealt to each player at the start of the game
+ * @returns undefined
+ */
+const simulatePlay = async (playerCount = 4, cardCount = 2) => {
+	const playerCount = playerCount
 	let i = 0,
 		o = 0
-	const players = await generatePlayers(amount)
+	const players = await generatePlayers(playerCount)
 	console.log('[+] Players are seated')
 	console.log('[+] Dealing their cards')
 
@@ -565,7 +624,10 @@ const simulatePlay = async (amount, cardCount) => {
 		const player = players[i]
 		console.log(`[-] Player_${i + 1} has:`, player.cards)
 	}
-	console.log(`[+] The Dealer's visible card is:`, dealer.cards[0])
+	console.log(
+		`[+] The Dealer's visible card${cardCount > 2 ? 's' : ''} is:`,
+		dealer.cards[0]
+	)
 	i = 0
 	console.log('[+] Players can now have their turns')
 	for (i; i < playerCount; i++) {

@@ -100,13 +100,7 @@ const choices = ['Hit', 'Stand']
  * A player doubles his bet, then is dealt an additional card, and is made to stand
  */
 
-const outcomes = [
-	'Player Wins',
-	'Dealer Wins',
-	'Push',
-	'Blackjack Win',
-	'Retrieve',
-]
+const outcomes = ['Player Wins', 'Dealer Wins', 'Push', 'Blackjack', 'Retrieve']
 /**
  * Player Wins:
  * A player's cards is equal or closer to 21 than the dealer's,
@@ -123,6 +117,13 @@ const outcomes = [
  * Push:
  * The dealer's cards is equal to a player's cards,
  * then there are no exchange of bets
+ */
+
+/**
+ * Blackjack:
+ * A player is dealt a natural with the Dealer not having one upon reveal,
+ * then the player gets back his bet amount,
+ * and an amount equal to one and half his bet amount
  */
 
 /**

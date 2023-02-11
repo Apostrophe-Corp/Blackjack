@@ -524,11 +524,6 @@ const playDealer = async (dealer, onSurrender = false) => {
  * @returns A string array representing the outcome of a player's submission
  */
 const getOutcome = async (player, who) => {
-	// if (player.cards_.length) {
-	// 	if (player.surrendered && player.surrendered_) return
-	// } else {
-	// 	if (player.surrendered) return
-	// }
 	const outcome = []
 	if (!player.cards_.length) {
 		try {

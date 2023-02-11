@@ -489,7 +489,6 @@ const playDealer = async (dealer, onSurrender = false) => {
 		return true
 	} else {
 		if (onSurrender) {
-			console.log(`[+] Dealer does not have a natural`)
 			try {
 				await dealer.ctc.apis.Dealer.submitHand(
 					cardValue(dealer.cards),
@@ -540,9 +539,10 @@ const playDealer = async (dealer, onSurrender = false) => {
  * Gets the outcome of a player's submission
  * @param {Object} player A player object representing a player on the table
  * @param {String} who The player identifier
+ * @param {Boolean} isFirstHand An indicator as which hand is being evaluated
  * @returns A string array representing the outcome of a player's submission
  */
-const getOutcome = async (player, who) => {
+const getOutcome = async (player, who, isFirstHand = true) => {
 	const outcome = []
 	if (!player.cards_.length) {
 		try {
@@ -562,30 +562,33 @@ const getOutcome = async (player, who) => {
 		}
 	} else {
 		try {
-			console.log(`[-] ${who}'s hand is:`, player.cards)
-			const byteResponse = await player.ctc.apis.Player.getOutcome(
-				cardValue(player.cards),
-				player.cards.length,
-				player.boughtInsurance,
-				player.surrendered,
-				player.doubledDown
-			)
-			console.log(`[-] ${who} pays his wager, and awaits his outcome`)
-			const response = noneNull(byteResponse)
-			outcome.push(response)
-			console.log(`${who}'s second hand is:`, player.cards_)
-			const byteResponse_ = await player.ctc.apis.Player.getOutcome(
-				cardValue(player.cards_),
-				player.cards_.length,
-				player.boughtInsurance_,
-				player.surrendered_,
-				player.doubledDown_
-			)
-			console.log(
-				`[-] ${who} pays his second wager, and awaits his second outcome`
-			)
-			const response_ = noneNull(byteResponse_)
-			outcome.push(response_)
+			if (isFirstHand) {
+				console.log(`[-] ${who}'s hand is:`, player.cards)
+				const byteResponse = await player.ctc.apis.Player.getOutcome(
+					cardValue(player.cards),
+					player.cards.length,
+					player.boughtInsurance,
+					player.surrendered,
+					player.doubledDown
+				)
+				console.log(`[-] ${who} pays his wager, and awaits his outcome`)
+				const response = noneNull(byteResponse)
+				outcome.push(response)
+			} else {
+				console.log(`[-] ${who}'s second hand is:`, player.cards_)
+				const byteResponse_ = await player.ctc.apis.Player.getOutcome(
+					cardValue(player.cards_),
+					player.cards_.length,
+					player.boughtInsurance_,
+					player.surrendered_,
+					player.doubledDown_
+				)
+				console.log(
+					`[-] ${who} pays his second wager, and awaits his second outcome`
+				)
+				const response_ = noneNull(byteResponse_)
+				outcome.push(response_)
+			}
 		} catch (error) {
 			console.log({ error })
 		}
@@ -649,29 +652,62 @@ const simulatePlay = async (playerCount = 4, cardCount = 2) => {
 		if (playerSurrendered) {
 			await playDealer(dealer, true)
 			console.log(
-				`[-] Player_${i + 1}'s balance before submitting:`,
+				`[-] Player_${i + 1}'s balance before submitting${
+					player.surrendered_ ? ' his second hand' : ''
+				}:`,
 				await player.balance(),
 				reach.standardUnit
 			)
-			const outcome = await getOutcome(player, `Player_${i + 1}`)
-			console.log(
-				`[-] Player_${i + 1}'s balance after submitting:`,
-				await player.balance(),
-				reach.standardUnit
-			)
-			if (
-				outcome[0] == 'End' ||
-				(player.cards_.length && outcome[1] == 'End')
-			) {
-				console.log(
-					`[-] Player_${
-						i + 1
-					} surrendered with the Dealer actually having a natural`
-				)
-				console.log("[+] The Dealer's hand", dealer.cards)
-				return
+			if (player.surrendered) {
+				console.log(`[-] Player_${i + 1} submits his hand`)
+				const outcome = await getOutcome(player, `Player_${i + 1}`, true)
+				if (outcome[0] == 'End') {
+					console.log(
+						`[-] Player_${
+							i + 1
+						} surrendered with the Dealer actually having a natural`
+					)
+					console.log("[+] The Dealer's hand", dealer.cards)
+					console.log(
+						`[-] Player_${i + 1}'s balance after submitting:`,
+						await player.balance(),
+						reach.standardUnit
+					)
+					return
+				} else {
+					console.log(`[+] Dealer does not have a natural`)
+					console.log(
+						`[-] Player_${i + 1}'s balance after submitting:`,
+						await player.balance(),
+						reach.standardUnit
+					)
+					console.log('[+] The Game continues')
+				}
 			} else {
-				console.log('[+] The Game continues')
+				console.log(`[-] Player_${i + 1} submits his second hand`)
+				const outcome = await getOutcome(player, `Player_${i + 1}`, false)
+				if (outcome[0] == 'End') {
+					console.log(
+						`[-] Player_${
+							i + 1
+						} surrendered his second hand with the Dealer actually having a natural`
+					)
+					console.log("[+] The Dealer's hand", dealer.cards)
+					console.log(
+						`[-] Player_${i + 1}'s balance after submitting his second hand:`,
+						await player.balance(),
+						reach.standardUnit
+					)
+					return
+				} else {
+					console.log(`[+] Dealer does not have a natural`)
+					console.log(
+						`[-] Player_${i + 1}'s balance after submitting his second hand:`,
+						await player.balance(),
+						reach.standardUnit
+					)
+					console.log('[+] The Game continues')
+				}
 			}
 		}
 	}
@@ -690,13 +726,25 @@ const simulatePlay = async (playerCount = 4, cardCount = 2) => {
 			await player.balance(),
 			reach.standardUnit
 		)
-		const result = await getOutcome(player, `Player_${i + 1}`)
+		const result = await getOutcome(player, `Player_${i + 1}`, true)
 		console.log(`[+] The outcome for Player_${i + 1} is:`, result)
 		console.log(
 			`[-] Player_${i + 1}'s balance after submitting:`,
 			await player.balance(),
 			reach.standardUnit
 		)
+		if (player.cards_.length) {
+			const result = await getOutcome(player, `Player_${i + 1}`, false)
+			console.log(
+				`[+] The outcome for Player_${i + 1}'s second hand is:`,
+				result
+			)
+			console.log(
+				`[-] Player_${i + 1}'s balance after submitting his second hand:`,
+				await player.balance(),
+				reach.standardUnit
+			)
+		}
 	}
 	i = 0
 }

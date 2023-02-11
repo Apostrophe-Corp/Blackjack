@@ -184,6 +184,12 @@ const initialDeck = shuffleDeck(hearts, diamonds, spades, clovers)
  * @returns A formatted Algo value in String
  */
 const fmt = (x) => reach.formatCurrency(x, 4)
+
+/**
+ * Retrieves the balance of an account
+ * @param {Object} who An account
+ * @returns A formatted Algo value in String
+ */
 const balOf = async (who) => fmt(await reach.balanceOf(who))
 
 /**

@@ -44,8 +44,8 @@ Warning: your program uses stdlib.fundFromFaucet. That means it only works on Re
 [+] Player_4 just made a split
 [-] Player_4 was dealt: [ 'J', 'hearts' ]
 [-] Player_4's second hand was dealt: [ 'K', 'diamonds' ]
-[+] Player_4 stood
-[+] Player_4 stood his second hand
+[+] Player_4 was dealt a natural
+[+] Player_4 was dealt a natural on his second hand
 [+] Dealer now reveals his second card: [ '3', 'spades' ]
 [+] Dealer called for a hit
 [-] Dealer was dealt: [ '2', 'spades' ]

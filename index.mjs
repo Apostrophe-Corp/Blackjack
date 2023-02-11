@@ -391,7 +391,7 @@ const play = async (player, who) => {
 			)
 		}
 	} else {
-		console.log(`[+] ${who} stood`)
+		console.log(`[+] ${who} was dealt a natural`)
 	}
 	if (player.cards_.length) {
 		if (cardValue(player.cards_) != 21) {
@@ -454,7 +454,7 @@ const play = async (player, who) => {
 				)
 			}
 		} else {
-			console.log(`[+] ${who} stood his second hand`)
+			console.log(`[+] ${who} was dealt a natural on his second hand`)
 		}
 	}
 	return result

@@ -229,7 +229,7 @@ export const main = Reach.App(() => {
 				},
 			]
 		})
-	transfer(balance()).to(D)
+	transfer(bank).to(D)
 	commit()
 	exit()
 })

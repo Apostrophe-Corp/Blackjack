@@ -601,7 +601,7 @@ const getOutcome = async (player, who, isFirstHand = true) => {
  * @param {Array[Array[Number | String]]} cards An array of arrays representing a player's cards
  * @param {Number} amount The amount of cards to be dealt at a time
  */
-const dealCard = (cards = {}, amount = 1) => {
+const dealCard = (cards = [], amount = 1) => {
 	let i = 0
 	for (i; i < amount; i++) {
 		cards.push(initialDeck.shift())

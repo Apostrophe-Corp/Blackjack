@@ -255,8 +255,21 @@ const dealerStartingBal = 10000
 const accDealer = await reach.newTestAccount(
 	reach.parseCurrency(dealerStartingBal)
 )
+
+/**
+ * Calculates a 90 percent value of the dealer's account balance for the bank amount
+ * @param {Number} dealerStartingBal The dealer's starting balance
+ * @returns 90 percent of the dealer's balance
+ */
 const bankAmount = (dealerStartingBal) => (dealerStartingBal / 100) * 90
 const betAmount = 100
+
+/**
+ * Calculates the maximum amount of players for a game, based off the bank balance and relative to the internal maximumAccommodationRecommended
+ * @param {Number} bankAmount The amount held in the bank
+ * @param {Number} betAmount The base bet amount
+ * @returns The maximum allowed number of players, a value not exceeding the internal maximumAccommodationRecommended
+ */
 const maxPlayers = (bankAmount, betAmount) => {
 	const maximumAccommodationByBankBalance = Math.floor(
 		bankAmount / ((betAmount / 100) * 250)
@@ -269,9 +282,9 @@ const maxPlayers = (bankAmount, betAmount) => {
 }
 const startingBalance = reach.parseCurrency(betAmount * 6 + 100) // This is because
 // the maximum possible bet paid by a player can only be from
-// one player who splits, and both doubles down and
+// a player who splits, and then also doubles down and
 // pays insurance for both hands.
-// The additional 100 is just for fees, can easily be reduced to as little as 5.
+// The additional 100 is just for fees, can be conveniently reduced to as little as 5.
 const ctc = accDealer.contract(backend)
 let playerSurrendered = false
 console.log("[+] Welcome to Apostrophe's Blackjack Game")

@@ -186,7 +186,7 @@ const shuffleDeck = (hearts, diamonds, spades, clovers) => {
 	return newDeck
 }
 
-const initialDeck = shuffleDeck(hearts, diamonds, spades, clovers)
+const shuffledDeck = shuffleDeck(hearts, diamonds, spades, clovers)
 
 /**
  * Formats BigNumber microalgos to Algos in String
@@ -251,8 +251,27 @@ const cardValue = (cards) => {
 }
 
 // Game Flow---------------------------------------------
-const startingBalance = reach.parseCurrency(1000)
-const accDealer = await reach.newTestAccount(reach.parseCurrency(10000))
+const dealerStartingBal = 10000
+const accDealer = await reach.newTestAccount(
+	reach.parseCurrency(dealerStartingBal)
+)
+const bankAmount = (dealerStartingBal) => (dealerStartingBal / 100) * 90
+const betAmount = 100
+const maxPlayers = (bankAmount, betAmount) => {
+	const maximumAccommodationByBankBalance = Math.floor(
+		bankAmount / ((betAmount / 100) * 250)
+	)
+	const maximumAccommodationRecommended = 6 // Must be hardcoded,
+	// in consideration of the amount of players a deck can accommodate after deals have been made
+	return maximumAccommodationByBankBalance > maximumAccommodationRecommended
+		? maximumAccommodationRecommended
+		: maximumAccommodationByBankBalance
+}
+const startingBalance = reach.parseCurrency(betAmount * 6 + 100) // This is because
+// the maximum possible bet paid by a player can only be from
+// one player who splits, and both doubles down and
+// pays insurance for both hands.
+// The additional 100 is just for fees, can easily be reduced to as little as 5.
 const ctc = accDealer.contract(backend)
 let playerSurrendered = false
 console.log("[+] Welcome to Apostrophe's Blackjack Game")
@@ -604,17 +623,17 @@ const getOutcome = async (player, who, isFirstHand = true) => {
 const dealCard = (cards = [], amount = 1) => {
 	let i = 0
 	for (i; i < amount; i++) {
-		cards.push(initialDeck.shift())
+		cards.push(shuffledDeck.shift())
 	}
 }
 
 /**
  * Simulates the Game
  * @param {Number} playerCount The number of players to be simulated for the game
- * @param {Number} cardCount The amount of cards to be dealt to each player at the start of the game
  * @returns undefined
  */
-const simulatePlay = async (playerCount = 4, cardCount = 2) => {
+const simulatePlay = async (playerCount = 4) => {
+	const cardCount = 2
 	let i = 0,
 		o = 0
 	const players = await generatePlayers(playerCount)
@@ -640,10 +659,7 @@ const simulatePlay = async (playerCount = 4, cardCount = 2) => {
 		const player = players[i]
 		console.log(`[-] Player_${i + 1} has:`, player.cards)
 	}
-	console.log(
-		`[+] The Dealer's visible card${cardCount > 2 ? 's' : ''} is:`,
-		dealer.cards[0]
-	)
+	console.log(`[+] The Dealer's visible card is:`, dealer.cards[0])
 	i = 0
 	console.log('[+] Players can now have their turns')
 	for (i; i < playerCount; i++) {
@@ -751,13 +767,14 @@ const simulatePlay = async (playerCount = 4, cardCount = 2) => {
 console.log('[+] Starting the Game...')
 reach.withDisconnect(() =>
 	dealer.ctc.p.D({
-		bankAmount: reach.parseCurrency(9000),
-		betAmount: reach.parseCurrency(100),
+		bankAmount: reach.parseCurrency(bankAmount(dealerStartingBal)),
+		betAmount: reach.parseCurrency(betAmount),
 		deployed: async (betAmount) => {
 			console.log('[+] Blackjack started')
+			const initialBankView = fmt((await dealer.ctc.v.bank())[1])
 			console.log(
 				'[+] The Bank currently has',
-				fmt((await dealer.ctc.v.bank())[1]),
+				initialBankView,
 				reach.standardUnit
 			)
 			console.log(
@@ -765,7 +782,9 @@ reach.withDisconnect(() =>
 					reach.standardUnit
 				}`
 			)
-			await simulatePlay(4, 2)
+			await simulatePlay(
+				maxPlayers(bankAmount(Number(initialBankView)), Number(fmt(betAmount)))
+			)
 			console.log(`[+] The Game has ended`)
 			console.log(
 				'[+] The Bank is left with',

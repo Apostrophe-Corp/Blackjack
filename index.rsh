@@ -1,7 +1,7 @@
 'reach 0.1'
 
 const outcome = Bytes(20)
-const minimumBankBalance = (amt) => (amt + amt / 2) * 4
+const minimumBankBalance = (amt) => (amt / 100) * 250
 
 const [isOutcome, P_WINS, D_WINS, PUSH, RETRIEVE, BLACKJACK, END] = makeEnum(6)
 const getOutcome = (
@@ -56,19 +56,24 @@ const getOutcome = (
 }
 /**
  *  dealerHand,
-	dealerCount,
-	cardValue,
-	cardCount,
-	boughtInsurance,
-	surrendered
+ *	dealerCount,
+ *	cardValue,
+ *	cardCount,
+ *	boughtInsurance,
+ *	surrendered
  */
-assert(getOutcome(21, 2, 17, 3, false, false) == D_WINS)
-assert(getOutcome(21, 3, 21, 4, false, false) == PUSH)
-assert(getOutcome(12, 2, 13, 5, false, false) == P_WINS)
-assert(getOutcome(21, 2, 14, 4, true, false) == RETRIEVE)
 assert(getOutcome(20, 4, 21, 2, false, false) == BLACKJACK)
+assert(getOutcome(12, 3, 21, 2, false, false) == BLACKJACK)
+assert(getOutcome(12, 2, 13, 5, false, false) == P_WINS)
+assert(getOutcome(23, 2, 19, 4, true, false) == P_WINS)
+assert(getOutcome(21, 2, 17, 3, false, false) == D_WINS)
+assert(getOutcome(27, 4, 22, 3, false, false) == D_WINS)
+assert(getOutcome(21, 2, 14, 4, true, false) == RETRIEVE)
+assert(getOutcome(21, 2, 20, 5, true, false) == RETRIEVE)
+assert(getOutcome(21, 3, 21, 4, false, false) == PUSH)
+assert(getOutcome(15, 3, 15, 4, true, false) == PUSH)
+assert(getOutcome(21, 2, 19, 2, false, true) == END)
 assert(getOutcome(21, 2, 9, 2, false, true) == END)
-assert(getOutcome(20, 4, 20, 5, false, false) == PUSH)
 forall(UInt, (w) =>
 	forall(UInt, (x) =>
 		forall(UInt, (y) =>
@@ -161,19 +166,23 @@ export const main = Reach.App(() => {
 							const prize = bet - (boughtInsurance ? betAmount : 0)
 							if (bank + bet >= prize * 2) transfer(prize * 2).to(this)
 							ret(outcome.pad('Player Wins'))
+							const newBankBal = bank + bet - prize * 2
 							return [
-								bank + bet - prize * 2,
-								// This is because a player may buy insurance and double down
-								bank >= minimumBankBalance(betAmount),
+								newBankBal,
+								// This is because the highest possible prize
+								// the contract can pay out is a Blackjack win
+								// (250% of the bet amount)
+								newBankBal >= minimumBankBalance(betAmount),
 								dealerHand,
 								dealerCount,
 								hasDealt,
 							]
 						} else if (result == D_WINS) {
 							ret(outcome.pad('Dealer Wins'))
+							const newBankBal = bank + bet
 							return [
-								bank + bet,
-								bank >= minimumBankBalance(betAmount),
+								newBankBal,
+								newBankBal >= minimumBankBalance(betAmount),
 								dealerHand,
 								dealerCount,
 								hasDealt,
@@ -202,18 +211,20 @@ export const main = Reach.App(() => {
 							if (bank + bet >= bet + bet + bet / 2)
 								transfer(bet + bet + bet / 2).to(this)
 							ret(outcome.pad('Blackjack'))
+							const newBankBal = bank - (bet + bet / 2)
 							return [
-								bank - (bet + bet / 2),
-								bank >= minimumBankBalance(betAmount),
+								newBankBal,
+								newBankBal >= minimumBankBalance(betAmount),
 								dealerHand,
 								dealerCount,
 								hasDealt,
 							]
 						} else {
 							ret(outcome.pad('End'))
+							const newBankBal = bank + bet
 							return [
-								bank + bet,
-								bank >= minimumBankBalance(betAmount),
+								newBankBal,
+								newBankBal >= minimumBankBalance(betAmount),
 								dealerHand,
 								dealerCount,
 								hasDealt,

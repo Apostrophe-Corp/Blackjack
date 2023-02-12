@@ -6,35 +6,73 @@ Warning: your program uses stdlib.fundFromFaucet. That means it only works on Re
 [+] The Dealer is ready
 [+] Starting the Game...
 [+] Blackjack started
-[+] The Bank currently has 900 ALGO
+[+] The Bank currently has 9000 ALGO
 [+] The Dealer publishes the base bet: 100 ALGO
 [+] Players are seated
 [+] Dealing their cards
-[-] Player_1 was dealt: [ '9', 'spades' ]
-[-] Player_2 was dealt: [ '5', 'hearts' ]
-[-] Player_3 was dealt: [ '7', 'hearts' ]
-[-] Player_4 was dealt: [ '3', 'diamonds' ]
+[-] Player_1 was dealt: [ '2', 'diamonds' ]
+[-] Player_2 was dealt: [ 'K', 'clovers' ]
+[-] Player_3 was dealt: [ '3', 'hearts' ]
+[-] Player_4 was dealt: [ '2', 'spades' ]
 [+] Dealing the Dealer
-[-] Player_1 was dealt: [ '2', 'spades' ]
-[-] Player_2 was dealt: [ '7', 'spades' ]
-[-] Player_3 was dealt: [ 'A', 'hearts' ]
-[-] Player_4 was dealt: [ '4', 'diamonds' ]
+[-] Player_1 was dealt: [ '8', 'diamonds' ]
+[-] Player_2 was dealt: [ '6', 'spades' ]
+[-] Player_3 was dealt: [ 'K', 'hearts' ]
+[-] Player_4 was dealt: [ '5', 'spades' ]
 [+] Dealing the Dealer
 [+] Dealing complete
 [+] These are the initial cards
-[-] Player_1 has: [ [ '9', 'spades' ], [ '2', 'spades' ] ]
-[-] Player_2 has: [ [ '5', 'hearts' ], [ '7', 'spades' ] ]
-[-] Player_3 has: [ [ '7', 'hearts' ], [ 'A', 'hearts' ] ]
-[-] Player_4 has: [ [ '3', 'diamonds' ], [ '4', 'diamonds' ] ]
-[+] The Dealer's visible card is: [ 'J', 'spades' ]
+[-] Player_1 has: [ [ '2', 'diamonds' ], [ '8', 'diamonds' ] ]
+[-] Player_2 has: [ [ 'K', 'clovers' ], [ '6', 'spades' ] ]
+[-] Player_3 has: [ [ '3', 'hearts' ], [ 'K', 'hearts' ] ]
+[-] Player_4 has: [ [ '2', 'spades' ], [ '5', 'spades' ] ]
+[+] The Dealer's visible card is: [ 'J', 'hearts' ]
 [+] Players can now have their turns
 [+] Player_1 surrendered
-[+] Dealer has a natural, as his second card is: [ 'A', 'diamonds' ]
-[+] Dealer's card value is 21
 [-] Player_1's balance before submitting: 1000 ALGO
-[-] Player_1's hand is: [ [ '9', 'spades' ], [ '2', 'spades' ] ]
+[-] Player_1 submits his hand
+[-] Player_1's hand is: [ [ '2', 'diamonds' ], [ '8', 'diamonds' ] ]
 [-] Player_1 pays his wager, and awaits his outcome
+[+] Dealer does not have a natural
 [-] Player_1's balance after submitting: 949.998 ALGO
-[-] Player_1 surrendered with the Dealer actually having a blackjack
+[+] The Game continues
+[+] Player_2 called for a hit
+[-] Player_2 was dealt: [ 'Q', 'clovers' ]
+[+] Player_2's card value is 26, It's a Bust!
+[+] Player_3 called for a hit
+[-] Player_3 was dealt: [ 'J', 'clovers' ]
+[+] Player_3's card value is 23, It's a Bust!
+[+] Player_4 called for a hit
+[-] Player_4 was dealt: [ '10', 'spades' ]
+[+] Player_4 called for a hit
+[-] Player_4 was dealt: [ '2', 'clovers' ]
+[+] Player_4 called for a hit
+[-] Player_4 was dealt: [ '3', 'clovers' ]
+[+] Player_4's card value is 22, It's a Bust!
+[+] Dealer now reveals his second card: [ '7', 'hearts' ]
+[+] Dealer has stood
+[+] Dealer's card value is 17
+[+] The Dealer's hand [ [ 'J', 'hearts' ], [ '7', 'hearts' ] ]
+[-] Player_2's balance before submitting: 1000 ALGO
+[-] Player_2's hand is: [ [ 'K', 'clovers' ], [ '6', 'spades' ], [ 'Q', 'clovers' ] ]
+[-] Player_2 pays his wager, and awaits his outcome
+[+] The outcome for Player_2 is: [ 'Dealer Wins' ]
+[-] Player_2's balance after submitting: 899.998 ALGO
+[-] Player_3's balance before submitting: 1000 ALGO
+[-] Player_3's hand is: [ [ '3', 'hearts' ], [ 'K', 'hearts' ], [ 'J', 'clovers' ] ]
+[-] Player_3 pays his wager, and awaits his outcome
+[+] The outcome for Player_3 is: [ 'Dealer Wins' ]
+[-] Player_3's balance after submitting: 899.998 ALGO
+[-] Player_4's balance before submitting: 1000 ALGO
+[-] Player_4's hand is: [
+  [ '2', 'spades' ],
+  [ '5', 'spades' ],
+  [ '10', 'spades' ],
+  [ '2', 'clovers' ],
+  [ '3', 'clovers' ]
+]
+[-] Player_4 pays his wager, and awaits his outcome
+[+] The outcome for Player_4 is: [ 'Dealer Wins' ]
+[-] Player_4's balance after submitting: 899.998 ALGO
 [+] The Game has ended
-[+] The Bank is left with 950 ALGO
+[+] The Bank is left with 9350 ALGO

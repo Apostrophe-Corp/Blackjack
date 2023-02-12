@@ -138,7 +138,7 @@ export const main = Reach.App(() => {
 					'The Bank cannot accommodate your bet'
 				)
 				const bet = boughtInsurance
-					? betAmount * (doubledDown ? 4 : 2)
+					? betAmount + (doubledDown ? betAmount * 2 : betAmount)
 					: surrendered
 					? betAmount / 2
 					: doubledDown
@@ -156,11 +156,13 @@ export const main = Reach.App(() => {
 							surrendered
 						)
 						if (result == P_WINS) {
-							const prize = bet * 2
-							if (bank + bet >= prize) transfer(prize).to(this)
+							// If a player bought insurance, we do not return the insurance,
+							// because he won the game with the dealer not having a natural
+							const prize = bet - (boughtInsurance ? betAmount : 0)
+							if (bank + bet >= prize * 2) transfer(prize * 2).to(this)
 							ret(outcome.pad('Player Wins'))
 							return [
-								bank - bet,
+								bank + bet - prize * 2,
 								// This is because a player may buy insurance and double down
 								bank >= minimumBankBalance(betAmount),
 								dealerHand,

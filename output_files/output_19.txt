@@ -1,0 +1,67 @@
+> index
+> node --experimental-modules --unhandled-rejections=strict index.mjs
+
+Warning: your program uses stdlib.fundFromFaucet. That means it only works on Reach devnets!
+[+] Welcome to Apostrophe's Blackjack Game
+[+] The Dealer is ready
+[+] Starting the Game...
+[+] Blackjack started
+[+] The Bank currently has 9000 ALGO
+[+] The Dealer publishes the base bet: 100 ALGO
+[+] Players are seated
+[+] Dealing their cards
+[-] Player_1 was dealt: [ 'A', 'hearts' ]
+[-] Player_2 was dealt: [ '3', 'clovers' ]
+[-] Player_3 was dealt: [ '8', 'diamonds' ]
+[-] Player_4 was dealt: [ '5', 'diamonds' ]
+[+] Dealing the Dealer
+[-] Player_1 was dealt: [ '9', 'diamonds' ]
+[-] Player_2 was dealt: [ '7', 'spades' ]
+[-] Player_3 was dealt: [ 'Q', 'hearts' ]
+[-] Player_4 was dealt: [ '6', 'hearts' ]
+[+] Dealing the Dealer
+[+] Dealing complete
+[+] These are the initial cards
+[-] Player_1 has: [ [ 'A', 'hearts' ], [ '9', 'diamonds' ] ]
+[-] Player_2 has: [ [ '3', 'clovers' ], [ '7', 'spades' ] ]
+[-] Player_3 has: [ [ '8', 'diamonds' ], [ 'Q', 'hearts' ] ]
+[-] Player_4 has: [ [ '5', 'diamonds' ], [ '6', 'hearts' ] ]
+[+] The Dealer's visible card is: [ '2', 'diamonds' ]
+[+] Players can now have their turns
+[+] Player_1 stood
+[+] Player_1's card value is 20
+[+] Player_2 doubled down
+[-] Player_2 was dealt: [ 'Q', 'clovers' ]
+[+] Player_2's card value is 20
+[+] Player_3 stood
+[+] Player_3's card value is 18
+[+] Player_4 doubled down
+[-] Player_4 was dealt: [ 'J', 'diamonds' ]
+[+] Player_4's card value is 21
+[+] Dealer now reveals his second card: [ 'Q', 'spades' ]
+[+] Dealer called for a hit
+[-] Dealer was dealt: [ '10', 'hearts' ]
+[+] Dealer's card value is 22 , It's a Bust!
+[+] The Dealer's hand [ [ '2', 'diamonds' ], [ 'Q', 'spades' ], [ '10', 'hearts' ] ]
+[-] Player_1's balance before submitting: 1000 ALGO
+[-] Player_1's hand is: [ [ 'A', 'hearts' ], [ '9', 'diamonds' ] ]
+[-] Player_1 pays his wager, and awaits his outcome
+[+] The outcome for Player_1 is: [ 'Player Wins' ]
+[-] Player_1's balance after submitting: 1099.997 ALGO
+[-] Player_2's balance before submitting: 1000 ALGO
+[-] Player_2's hand is: [ [ '3', 'clovers' ], [ '7', 'spades' ], [ 'Q', 'clovers' ] ]
+[-] Player_2 pays his wager, and awaits his outcome
+[+] The outcome for Player_2 is: [ 'Player Wins' ]
+[-] Player_2's balance after submitting: 1199.997 ALGO
+[-] Player_3's balance before submitting: 1000 ALGO
+[-] Player_3's hand is: [ [ '8', 'diamonds' ], [ 'Q', 'hearts' ] ]
+[-] Player_3 pays his wager, and awaits his outcome
+[+] The outcome for Player_3 is: [ 'Player Wins' ]
+[-] Player_3's balance after submitting: 1099.997 ALGO
+[-] Player_4's balance before submitting: 1000 ALGO
+[-] Player_4's hand is: [ [ '5', 'diamonds' ], [ '6', 'hearts' ], [ 'J', 'diamonds' ] ]
+[-] Player_4 pays his wager, and awaits his outcome
+[+] The outcome for Player_4 is: [ 'Player Wins' ]
+[-] Player_4's balance after submitting: 1199.997 ALGO
+[+] The Game has ended
+[+] The Bank is left with 8400 ALGO

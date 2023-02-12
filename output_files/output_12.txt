@@ -54,7 +54,7 @@ Warning: your program uses stdlib.fundFromFaucet. That means it only works on Re
 [-] Player_1's hand is: [ [ 'J', 'hearts' ], [ '8', 'diamonds' ] ]
 [-] Player_1 pays his wager, and awaits his outcome
 [+] The outcome for Player_1 is: [ 'Player Wins' ]
-[-] Player_1's balance after submitting: 1199.997 ALGO
+[-] Player_1's balance after submitting: 999.997 ALGO
 [-] Player_2's balance before submitting: 1000 ALGO
 [-] Player_2's hand is: [ [ '2', 'diamonds' ], [ '10', 'diamonds' ], [ '5', 'hearts' ] ]
 [-] Player_2 pays his wager, and awaits his outcome

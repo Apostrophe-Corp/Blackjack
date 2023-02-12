@@ -54,16 +54,16 @@ Warning: your program uses stdlib.fundFromFaucet. That means it only works on Re
 [-] Player_2's hand is: [ [ '6', 'diamonds' ], [ '3', 'spades' ], [ '8', 'clovers' ] ]
 [-] Player_2 pays his wager, and awaits his outcome
 [+] The outcome for Player_2 is: [ 'Player Wins' ]
-[-] Player_2's balance after submitting: 1199.997 ALGO
+[-] Player_2's balance after submitting: 999.997 ALGO
 [-] Player_3's balance before submitting: 1000 ALGO
 [-] Player_3's hand is: [ [ 'K', 'clovers' ], [ '10', 'diamonds' ] ]
 [-] Player_3 pays his wager, and awaits his outcome
 [+] The outcome for Player_3 is: [ 'Player Wins' ]
-[-] Player_3's balance after submitting: 1199.997 ALGO
+[-] Player_3's balance after submitting: 999.997 ALGO
 [-] Player_4's balance before submitting: 1000 ALGO
 [-] Player_4's hand is: [ [ '7', 'diamonds' ], [ '8', 'diamonds' ] ]
 [-] Player_4 pays his wager, and awaits his outcome
 [+] The outcome for Player_4 is: [ 'Player Wins' ]
-[-] Player_4's balance after submitting: 1199.997 ALGO
+[-] Player_4's balance after submitting: 999.997 ALGO
 [+] The Game has ended
 [+] The Bank is left with 8250 ALGO

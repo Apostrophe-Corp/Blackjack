@@ -887,44 +887,6 @@ const simulatePlay = async (playerCount = 4) => {
 				console.log('')
 			}
 		}
-		i = 0
-		for (i; i < playerCount; i++) {
-			const player = players[i]
-			if (player.cards_.length) {
-				if (player.surrendered && player.surrendered_) continue
-			} else {
-				if (player.surrendered) continue
-			}
-			console.log(
-				`[-] Player_${i + 1}'s balance before his getting outcome:`,
-				await player.balance(),
-				reach.standardUnit
-			)
-			const result = await getOutcome(player, `Player_${i + 1}`, true)
-			console.log(`[+] The outcome for Player_${i + 1} is:`, result)
-			console.log(
-				`[-] Player_${i + 1}'s balance after viewing his outcome:`,
-				await player.balance(),
-				reach.standardUnit
-			)
-			console.log('')
-			if (player.cards_.length) {
-				const result = await getOutcome(player, `Player_${i + 1}`, false)
-				console.log(
-					`[+] The outcome for Player_${i + 1}'s second hand is:`,
-					result
-				)
-				console.log(
-					`[-] Player_${
-						i + 1
-					}'s balance after viewing the outcome of his second hand:`,
-					await player.balance(),
-					reach.standardUnit
-				)
-				console.log('')
-			}
-		}
-		i = 0
 	} else {
 		console.log(`[+] The remaining players must reclaim their bets`)
 		i = 0

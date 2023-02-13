@@ -473,7 +473,7 @@ export const main = Reach.App(() => {
 							pendingPayouts - 1,
 						]
 					} else {
-						// result == RETRIEVE, as it can never be end at this point,
+						// result == RETRIEVE, as it can never be END at this point,
 						// for no player who had surrendered can make this call
 						if (bank >= playerBet) transfer(playerBet).to(this)
 						ret(outcome.pad('Retrieve'))
@@ -496,7 +496,7 @@ export const main = Reach.App(() => {
 			const playerBet = fromPlayersBet(
 				isFirstHand ? players1stBet[this] : players2ndBet[this]
 			)
-			check(playerSurrendered, 'No one has surrendered yet')
+			check(playerSurrendered, 'No one has surrendered with the Dealer having a natural yet')
 			check(playersSet.member(this), 'You do not have a bet in this game')
 			check(this != D, 'You are not authorized to make this call')
 			return [

@@ -649,7 +649,7 @@ const getOutcome = async (player, who, isFirstHand = true) => {
 		try {
 			console.log(`[-] ${who}'s hand is:`, player.cards)
 			const byteResponse = await player.ctc.apis.Player.getOutcome(isFirstHand)
-			console.log(`[-] ${who} pays his wager, and awaits his outcome`)
+			console.log(`[-] ${who} awaits his outcome`)
 			const response = noneNull(byteResponse)
 			outcome.push(response)
 		} catch (error) {

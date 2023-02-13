@@ -352,6 +352,10 @@ export const main = Reach.App(() => {
 			)
 			check(playersSet.member(this), 'You did not place a bet on this game')
 			check(this != D, 'You are not authorized to make this call')
+			check(
+				cardCount > 0 && cardValue > 0,
+				'Invalid submission'
+			)
 			return [
 				0,
 				(ret) => {
@@ -390,10 +394,6 @@ export const main = Reach.App(() => {
 			)
 			check(playersSet.member(this), 'You did not place a bet on this game')
 			check(hasDealt, 'The Dealer is yet to submit his hand')
-			check(
-				playerHand.cardCount > 0 && playerHand.cardValue > 0,
-				'Invalid submission'
-			)
 			check(this != D, 'You are not authorized to make this call')
 			return [
 				0,

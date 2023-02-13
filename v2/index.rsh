@@ -337,7 +337,7 @@ export const main = Reach.App(() => {
 						dealerHand,
 						dealerCount,
 						hasDealt,
-						true,
+						result == END,
 						pendingPayouts - 1,
 					]
 				},

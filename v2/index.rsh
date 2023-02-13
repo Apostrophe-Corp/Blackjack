@@ -132,6 +132,7 @@ export const main = Reach.App(() => {
 	const Dealer = API('Dealer', {
 		submitHand: Fun([UInt, UInt], Null),
 		newRound: Fun([], Null),
+		endGame: Fun([], UInt),
 	})
 
 	const Bank = View({
@@ -532,13 +533,34 @@ export const main = Reach.App(() => {
 				pendingPayouts == 0,
 				'There are still pending payouts to be made for this round'
 			)
-			check(hasDealt, 'You must make a submission for the current round first')
 			check(this == D, 'You are not authorized to make this call')
 			return [
 				0,
 				(ret) => {
 					ret(null)
 					return [bank, keepGoing, 0, 0, false, false, pendingPayouts]
+				},
+			]
+		})
+		.api_(Dealer.endGame, () => {
+			check(
+				pendingPayouts == 0,
+				'There are still pending payouts to be made for this round'
+			)
+			check(this == D, 'You are not authorized to make this call')
+			return [
+				0,
+				(ret) => {
+					ret(bank)
+					return [
+						bank,
+						false,
+						dealerHand,
+						dealerCount,
+						hasDealt,
+						playerSurrendered,
+						pendingPayouts,
+					]
 				},
 			]
 		})

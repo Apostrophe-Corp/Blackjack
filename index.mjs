@@ -778,9 +778,11 @@ const simulatePlay = async (playerCount = 4) => {
 	i = 0
 }
 console.log('[+] Starting the Game...')
-reach.withDisconnect(() =>
+reach.withDisconnect(async () =>
 	dealer.ctc.p.D({
-		bankAmount: reach.parseCurrency(bankAmount(dealerStartingBal)),
+		bankAmount: reach.parseCurrency(
+			bankAmount(Math.ceil(Number(await dealer.balance())))
+		),
 		betAmount: reach.parseCurrency(betAmount),
 		deployed: async (betAmount) => {
 			console.log('[+] Blackjack started')

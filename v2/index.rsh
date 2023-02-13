@@ -1,6 +1,6 @@
 'reach 0.1'
 
-const outcome = Bytes(20)
+const outcome = Bytes(11)
 const defaultHand = {
 	cardValue: 0,
 	cardCount: 0,
@@ -399,7 +399,7 @@ export const main = Reach.App(() => {
 						const prize =
 							playerBet - (playerHand.boughtInsurance ? betAmount : 0)
 						if (bank >= prize * 2) transfer(prize * 2).to(this)
-						ret(outcome.pad('Player Wins'))
+						ret('Player Wins')
 						const newBankBal = bank - prize * 2
 						cleanupCheck(isFirstHand, this)
 						return [

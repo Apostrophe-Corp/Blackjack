@@ -1,5 +1,9 @@
 build/*
-.reach/*
+*.reach/*
+v1/.reach/*
+v2/.reach/*
+v1/build/*
+v2/build/*
 .vscode/*
 *test.*
 Dockerfile

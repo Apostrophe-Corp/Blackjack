@@ -352,10 +352,7 @@ export const main = Reach.App(() => {
 			)
 			check(playersSet.member(this), 'You did not place a bet on this game')
 			check(this != D, 'You are not authorized to make this call')
-			check(
-				cardCount > 0 && cardValue > 0,
-				'Invalid submission'
-			)
+			check(cardCount > 0 && cardValue > 0, 'Invalid submission')
 			return [
 				0,
 				(ret) => {

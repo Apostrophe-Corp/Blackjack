@@ -8,6 +8,13 @@ const defaultHand = {
 	surrendered: false,
 	doubledDown: false,
 }
+const handObject = Object({
+	cardValue: UInt,
+	cardCount: UInt,
+	boughtInsurance: Bool,
+	surrendered: Bool,
+	doubledDown: Bool,
+})
 const fromPlayersBet = (x) =>
 	fromMaybe(
 		x,
@@ -144,28 +151,8 @@ export const main = Reach.App(() => {
 	const playersSet = new Set()
 	const players1stBet = new Map(Address, UInt)
 	const players2ndBet = new Map(Address, UInt)
-
-	const players1stHand = new Map(
-		Address,
-		Object({
-			cardValue: UInt,
-			cardCount: UInt,
-			boughtInsurance: Bool,
-			surrendered: Bool,
-			doubledDown: Bool,
-		})
-	)
-
-	const players2ndHand = new Map(
-		Address,
-		Object({
-			cardValue: UInt,
-			cardCount: UInt,
-			boughtInsurance: Bool,
-			surrendered: Bool,
-			doubledDown: Bool,
-		})
-	)
+	const players1stHand = new Map(Address, handObject)
+	const players2ndHand = new Map(Address, handObject)
 
 	const [
 		bank,
@@ -496,7 +483,10 @@ export const main = Reach.App(() => {
 			const playerBet = fromPlayersBet(
 				isFirstHand ? players1stBet[this] : players2ndBet[this]
 			)
-			check(playerSurrendered, 'No one has surrendered with the Dealer having a natural yet')
+			check(
+				playerSurrendered,
+				'No one has surrendered with the Dealer having a natural yet'
+			)
 			check(playersSet.member(this), 'You do not have a bet in this game')
 			check(this != D, 'You are not authorized to make this call')
 			return [

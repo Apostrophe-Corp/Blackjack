@@ -174,7 +174,8 @@ export const main = Reach.App(() => {
 		dealerCount,
 		hasDealt,
 		playerSurrendered,
-	] = parallelReduce([bankAmount, true, 0, 0, false, false])
+		pendingPayouts,
+	] = parallelReduce([bankAmount, true, 0, 0, false, false, 0])
 		.invariant(bank == balance())
 		.define(() => {
 			Bank.bank.set(bank)
@@ -219,6 +220,8 @@ export const main = Reach.App(() => {
 						dealerCount,
 						hasDealt,
 						playerSurrendered,
+						pendingPayouts,
+						+1,
 					]
 				},
 			]
@@ -257,6 +260,7 @@ export const main = Reach.App(() => {
 						dealerCount,
 						hasDealt,
 						playerSurrendered,
+						pendingPayouts,
 					]
 				},
 			]
@@ -295,6 +299,7 @@ export const main = Reach.App(() => {
 						dealerCount,
 						hasDealt,
 						playerSurrendered,
+						pendingPayouts,
 					]
 				},
 			]
@@ -334,6 +339,7 @@ export const main = Reach.App(() => {
 						dealerCount,
 						hasDealt,
 						true,
+						pendingPayouts - 1,
 					]
 				},
 			]
@@ -371,6 +377,7 @@ export const main = Reach.App(() => {
 						dealerCount,
 						hasDealt,
 						playerSurrendered,
+						pendingPayouts,
 					]
 				},
 			]
@@ -419,6 +426,7 @@ export const main = Reach.App(() => {
 							dealerCount,
 							hasDealt,
 							playerSurrendered,
+							pendingPayouts - 1,
 						]
 					} else if (result == D_WINS) {
 						ret(outcome.pad('Dealer Wins'))
@@ -430,6 +438,7 @@ export const main = Reach.App(() => {
 							dealerCount,
 							hasDealt,
 							playerSurrendered,
+							pendingPayouts - 1,
 						]
 					} else if (result == PUSH) {
 						// If a player bought insurance, we do not return the insurance,
@@ -447,6 +456,7 @@ export const main = Reach.App(() => {
 							dealerCount,
 							hasDealt,
 							playerSurrendered,
+							pendingPayouts - 1,
 						]
 					} else if (result == BLACKJACK) {
 						const blackjack = (playerBet / 100) * 250
@@ -461,6 +471,7 @@ export const main = Reach.App(() => {
 							dealerCount,
 							hasDealt,
 							playerSurrendered,
+							pendingPayouts - 1,
 						]
 					} else {
 						// result == RETRIEVE, as it can never be end at this point,
@@ -476,6 +487,7 @@ export const main = Reach.App(() => {
 							dealerCount,
 							hasDealt,
 							playerSurrendered,
+							pendingPayouts - 1,
 						]
 					}
 				},
@@ -502,6 +514,7 @@ export const main = Reach.App(() => {
 						dealerCount,
 						hasDealt,
 						playerSurrendered,
+						pendingPayouts - 1,
 					]
 				},
 			]
@@ -520,18 +533,23 @@ export const main = Reach.App(() => {
 						cardCount,
 						true,
 						playerSurrendered,
+						pendingPayouts,
 					]
 				},
 			]
 		})
 		.api_(Dealer.newRound, () => {
-			check(hasDealt, 'You must make a submission first')
+			check(
+				pendingPayouts == 0,
+				'There are still pending payouts to be made for this round'
+			)
+			check(hasDealt, 'You must make a submission for the current round first')
 			check(this == D, 'You are not authorized to make this call')
 			return [
 				0,
 				(ret) => {
 					ret(null)
-					return [bank, keepGoing, 0, 0, false, false]
+					return [bank, keepGoing, 0, 0, false, false, pendingPayouts]
 				},
 			]
 		})

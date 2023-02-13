@@ -408,7 +408,7 @@ export const main = Reach.App(() => {
 					)
 					if (result == P_WINS) {
 						// If a player bought insurance, we do not return the insurance,
-						// because he won the game with the dealer not having a natural
+						// because he won the game
 						const prize =
 							playerBet - (playerHand.boughtInsurance ? betAmount : 0)
 						if (bank >= prize * 2) transfer(prize * 2).to(this)
@@ -441,7 +441,7 @@ export const main = Reach.App(() => {
 						]
 					} else if (result == PUSH) {
 						// If a player bought insurance, we do not return the insurance,
-						// because he did not lose, and the dealer did not have a natural
+						// because he did not lose
 						const prize =
 							playerBet - (playerHand.boughtInsurance ? betAmount : 0)
 						if (bank >= prize) transfer(prize).to(this)

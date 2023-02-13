@@ -691,7 +691,8 @@ const dealCard = (cards = [], amount = 1) => {
 const simulatePlay = async (playerCount = 4) => {
 	const cardCount = 2
 	let i = 0,
-		o = 0
+		o = 0,
+		gameEnded = false
 	const players = await generatePlayers(playerCount)
 	console.log(`[+] The players are taking their seat at the table`)
 	for (i; i < playerCount; i++) {
@@ -829,7 +830,7 @@ const simulatePlay = async (playerCount = 4) => {
 						reach.standardUnit
 					)
 					console.log('')
-					return
+					gameEnded = true
 				} else {
 					console.log(`[+] Dealer does not have a natural`)
 					console.log(
@@ -845,47 +846,128 @@ const simulatePlay = async (playerCount = 4) => {
 			}
 		}
 	}
-	i = 0
-	await playDealer(dealer, false)
-	console.log("[+] The Dealer's hand", dealer.cards)
-	console.log('')
-	for (i; i < playerCount; i++) {
-		const player = players[i]
-		if (player.cards_.length) {
-			if (player.surrendered && player.surrendered_) continue
-		} else {
-			if (player.surrendered) continue
-		}
-		console.log(
-			`[-] Player_${i + 1}'s balance before his getting outcome:`,
-			await player.balance(),
-			reach.standardUnit
-		)
-		const result = await getOutcome(player, `Player_${i + 1}`, true)
-		console.log(`[+] The outcome for Player_${i + 1} is:`, result)
-		console.log(
-			`[-] Player_${i + 1}'s balance after viewing his outcome:`,
-			await player.balance(),
-			reach.standardUnit
-		)
+	if (!gameEnded) {
+		i = 0
+		await playDealer(dealer, false)
+		console.log("[+] The Dealer's hand", dealer.cards)
 		console.log('')
-		if (player.cards_.length) {
-			const result = await getOutcome(player, `Player_${i + 1}`, false)
+		for (i; i < playerCount; i++) {
+			const player = players[i]
+			if (player.cards_.length) {
+				if (player.surrendered && player.surrendered_) continue
+			} else {
+				if (player.surrendered) continue
+			}
 			console.log(
-				`[+] The outcome for Player_${i + 1}'s second hand is:`,
-				result
+				`[-] Player_${i + 1}'s balance before his getting outcome:`,
+				await player.balance(),
+				reach.standardUnit
 			)
+			const result = await getOutcome(player, `Player_${i + 1}`, true)
+			console.log(`[+] The outcome for Player_${i + 1} is:`, result)
 			console.log(
-				`[-] Player_${
-					i + 1
-				}'s balance after viewing the outcome of his second hand:`,
+				`[-] Player_${i + 1}'s balance after viewing his outcome:`,
 				await player.balance(),
 				reach.standardUnit
 			)
 			console.log('')
+			if (player.cards_.length) {
+				const result = await getOutcome(player, `Player_${i + 1}`, false)
+				console.log(
+					`[+] The outcome for Player_${i + 1}'s second hand is:`,
+					result
+				)
+				console.log(
+					`[-] Player_${
+						i + 1
+					}'s balance after viewing the outcome of his second hand:`,
+					await player.balance(),
+					reach.standardUnit
+				)
+				console.log('')
+			}
+		}
+		i = 0
+		for (i; i < playerCount; i++) {
+			const player = players[i]
+			if (player.cards_.length) {
+				if (player.surrendered && player.surrendered_) continue
+			} else {
+				if (player.surrendered) continue
+			}
+			console.log(
+				`[-] Player_${i + 1}'s balance before his getting outcome:`,
+				await player.balance(),
+				reach.standardUnit
+			)
+			const result = await getOutcome(player, `Player_${i + 1}`, true)
+			console.log(`[+] The outcome for Player_${i + 1} is:`, result)
+			console.log(
+				`[-] Player_${i + 1}'s balance after viewing his outcome:`,
+				await player.balance(),
+				reach.standardUnit
+			)
+			console.log('')
+			if (player.cards_.length) {
+				const result = await getOutcome(player, `Player_${i + 1}`, false)
+				console.log(
+					`[+] The outcome for Player_${i + 1}'s second hand is:`,
+					result
+				)
+				console.log(
+					`[-] Player_${
+						i + 1
+					}'s balance after viewing the outcome of his second hand:`,
+					await player.balance(),
+					reach.standardUnit
+				)
+				console.log('')
+			}
+		}
+		i = 0
+	} else {
+		console.log(`[+] The remaining players must reclaim their bets`)
+		i = 0
+		for (i; i < playerCount; i++) {
+			const player = players[i]
+			if (player.cards_.length) {
+				if (player.surrendered && player.surrendered_) continue
+			} else {
+				if (player.surrendered) continue
+			}
+			console.log(
+				`[-] Player_${i + 1}'s balance before making a reclaim:`,
+				await player.balance(),
+				reach.standardUnit
+			)
+			const totalBet = fmt(await player.ctc.apis.Player.reclaim(true))
+			console.log(
+				`[+] Player_${i + 1} reclaimed: ${totalBet} ${reach.standardUnit}`
+			)
+			console.log(
+				`[-] Player_${i + 1}'s balance after the reclaim:`,
+				await player.balance(),
+				reach.standardUnit
+			)
+			console.log('')
+			if (player.cards_.length) {
+				const totalBet = fmt(await player.ctc.apis.Player.reclaim(false))
+				console.log(
+					`[+] Player_${i + 1} reclaimed for his second hand: ${totalBet} ${
+						reach.standardUnit
+					}`
+				)
+				console.log(
+					`[-] Player_${
+						i + 1
+					}'s balance after the reclaim for his second hand:`,
+					await player.balance(),
+					reach.standardUnit
+				)
+				console.log('')
+			}
 		}
 	}
-	i = 0
 }
 console.log('[+] Starting the Game...')
 reach.withDisconnect(async () =>

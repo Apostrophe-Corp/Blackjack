@@ -119,10 +119,12 @@ export const main = Reach.App(() => {
 		surrender: Fun([Bool, UInt, UInt], outcome),
 		submitHand: Fun([Bool, UInt, UInt], UInt),
 		getOutcome: Fun([Bool], outcome),
+		reclaim: Fun([Bool], UInt),
 	})
 
 	const Dealer = API('Dealer', {
 		submitHand: Fun([UInt, UInt], Null),
+		newRound: Fun([], Null),
 	})
 
 	const Bank = View({
@@ -165,13 +167,14 @@ export const main = Reach.App(() => {
 		})
 	)
 
-	const [bank, keepGoing, dealerHand, dealerCount, hasDealt] = parallelReduce([
-		bankAmount,
-		true,
-		0,
-		0,
-		false,
-	])
+	const [
+		bank,
+		keepGoing,
+		dealerHand,
+		dealerCount,
+		hasDealt,
+		playerSurrendered,
+	] = parallelReduce([bankAmount, true, 0, 0, false, false])
 		.invariant(bank == balance())
 		.define(() => {
 			Bank.bank.set(bank)
@@ -194,6 +197,8 @@ export const main = Reach.App(() => {
 		})
 		.while(keepGoing)
 		.api_(Player.placeBet, (isFirstHand) => {
+			check(!playersSet.member(this), "You've placed a bet already")
+			check(this != D, 'You are not authorized to make this call')
 			return [
 				betAmount,
 				(ret) => {
@@ -213,6 +218,7 @@ export const main = Reach.App(() => {
 						dealerHand,
 						dealerCount,
 						hasDealt,
+						playerSurrendered,
 					]
 				},
 			]
@@ -226,6 +232,7 @@ export const main = Reach.App(() => {
 			)
 			check(playersSet.member(this), 'You did not place a bet on this game')
 			check(!playerHand.doubledDown, 'You cannot double down twice')
+			check(this != D, 'You are not authorized to make this call')
 			return [
 				betAmount,
 				(ret) => {
@@ -249,6 +256,7 @@ export const main = Reach.App(() => {
 						dealerHand,
 						dealerCount,
 						hasDealt,
+						playerSurrendered,
 					]
 				},
 			]
@@ -262,6 +270,7 @@ export const main = Reach.App(() => {
 			)
 			check(playersSet.member(this), 'You did not place a bet on this game')
 			check(!playerHand.boughtInsurance, 'You cannot buy insurance twice')
+			check(this != D, 'You are not authorized to make this call')
 			return [
 				betAmount,
 				(ret) => {
@@ -285,6 +294,7 @@ export const main = Reach.App(() => {
 						dealerHand,
 						dealerCount,
 						hasDealt,
+						playerSurrendered,
 					]
 				},
 			]
@@ -298,6 +308,7 @@ export const main = Reach.App(() => {
 				playerBet == betAmount,
 				'You are not allowed to surrender at this point'
 			)
+			check(this != D, 'You are not authorized to make this call')
 			return [
 				0,
 				(ret) => {
@@ -322,6 +333,7 @@ export const main = Reach.App(() => {
 						dealerHand,
 						dealerCount,
 						hasDealt,
+						true,
 					]
 				},
 			]
@@ -334,6 +346,7 @@ export const main = Reach.App(() => {
 				isFirstHand ? players1stHand[this] : players2ndHand[this]
 			)
 			check(playersSet.member(this), 'You did not place a bet on this game')
+			check(this != D, 'You are not authorized to make this call')
 			return [
 				0,
 				(ret) => {
@@ -351,7 +364,14 @@ export const main = Reach.App(() => {
 						}
 					}
 					ret(playerBet)
-					return [bank, keepGoing, dealerHand, dealerCount, hasDealt]
+					return [
+						bank,
+						keepGoing,
+						dealerHand,
+						dealerCount,
+						hasDealt,
+						playerSurrendered,
+					]
 				},
 			]
 		})
@@ -368,6 +388,7 @@ export const main = Reach.App(() => {
 				playerHand.cardCount > 0 && playerHand.cardValue > 0,
 				'Invalid submission'
 			)
+			check(this != D, 'You are not authorized to make this call')
 			return [
 				0,
 				(ret) => {
@@ -397,6 +418,7 @@ export const main = Reach.App(() => {
 							dealerHand,
 							dealerCount,
 							hasDealt,
+							playerSurrendered,
 						]
 					} else if (result == D_WINS) {
 						ret(outcome.pad('Dealer Wins'))
@@ -407,6 +429,7 @@ export const main = Reach.App(() => {
 							dealerHand,
 							dealerCount,
 							hasDealt,
+							playerSurrendered,
 						]
 					} else if (result == PUSH) {
 						// If a player bought insurance, we do not return the insurance,
@@ -423,6 +446,7 @@ export const main = Reach.App(() => {
 							dealerHand,
 							dealerCount,
 							hasDealt,
+							playerSurrendered,
 						]
 					} else if (result == BLACKJACK) {
 						const blackjack = (playerBet / 100) * 250
@@ -436,12 +460,12 @@ export const main = Reach.App(() => {
 							dealerHand,
 							dealerCount,
 							hasDealt,
+							playerSurrendered,
 						]
 					} else {
 						// result == RETRIEVE, as it can never be end at this point,
 						// for no player who had surrendered can make this call
-						if (bank >= playerBet)
-							transfer(playerBet).to(this)
+						if (bank >= playerBet) transfer(playerBet).to(this)
 						ret(outcome.pad('Retrieve'))
 						const newBankBal = bank - playerBet
 						cleanupCheck(isFirstHand, this)
@@ -451,18 +475,63 @@ export const main = Reach.App(() => {
 							dealerHand,
 							dealerCount,
 							hasDealt,
+							playerSurrendered,
 						]
 					}
 				},
 			]
 		})
+		.api_(Player.reclaim, (isFirstHand) => {
+			const playerBet = fromPlayersBet(
+				isFirstHand ? players1stBet[this] : players2ndBet[this]
+			)
+			check(playerSurrendered, 'No one has surrendered yet')
+			check(playersSet.member(this), 'You do not have a bet in this game')
+			check(this != D, 'You are not authorized to make this call')
+			return [
+				0,
+				(ret) => {
+					if (bank >= playerBet) transfer(playerBet).to(this)
+					ret(playerBet)
+					cleanupCheck(isFirstHand, this)
+					const newBankBal = bank - playerBet
+					return [
+						newBankBal,
+						newBankBal >= minimumBankBalance(betAmount),
+						dealerHand,
+						dealerCount,
+						hasDealt,
+						playerSurrendered,
+					]
+				},
+			]
+		})
 		.api_(Dealer.submitHand, (cardValue, cardCount) => {
 			check(cardCount > 0 && cardValue > 0, 'Invalid submission')
+			check(this == D, 'You are not authorized to make this call')
 			return [
 				0,
 				(ret) => {
 					ret(null)
-					return [bank, keepGoing, cardValue, cardCount, true]
+					return [
+						bank,
+						keepGoing,
+						cardValue,
+						cardCount,
+						true,
+						playerSurrendered,
+					]
+				},
+			]
+		})
+		.api_(Dealer.newRound, () => {
+			check(hasDealt, 'You must make a submission first')
+			check(this == D, 'You are not authorized to make this call')
+			return [
+				0,
+				(ret) => {
+					ret(null)
+					return [bank, keepGoing, 0, 0, false, false]
 				},
 			]
 		})

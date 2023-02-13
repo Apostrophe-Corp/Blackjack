@@ -198,7 +198,10 @@ export const main = Reach.App(() => {
 		})
 		.while(keepGoing)
 		.api_(Player.placeBet, (isFirstHand) => {
-			check(!playersSet.member(this), "You've placed a bet already")
+			const playerBet = fromPlayersBet(
+				isFirstHand ? players1stBet[this] : players2ndBet[this]
+			)
+			check(playerBet == 0, "You've placed a bet already")
 			check(this != D, 'You are not authorized to make this call')
 			return [
 				betAmount,

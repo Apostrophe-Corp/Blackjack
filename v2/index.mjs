@@ -349,15 +349,25 @@ const play = async (player, who) => {
 		player.cards[0][0] == player.cards[1][0]
 	) {
 		// A split must occur
-		player.cards_.push(player.cards.pop())
-		console.log(`[+] ${who} just made a split`)
-		dealCard(player.cards, 1)
-		console.log(`[-] ${who} was dealt:`, player.cards[player.cards.length - 1])
-		dealCard(player.cards_, 1)
-		console.log(
-			`[-] ${who}'s second hand was dealt:`,
-			player.cards_[player.cards_.length - 1]
-		)
+		try {
+			console.log(`[+] ${who} decides to split his identical cards`)
+			const totalBet = fmt(await player.ctc.apis.Player.placeBet(false))
+			player.cards_.push(player.cards.pop())
+			console.log(
+				`[+] ${who} has paid for his second hand an extra: ${totalBet} ${reach.standardUnit}`
+			)
+			console.log(`[+] Dealing ${who} extra cards for both hands`)
+			dealCard(player.cards, 1)
+			console.log(
+				`[-] ${who} was dealt:`,
+				player.cards[player.cards.length - 1]
+			)
+			dealCard(player.cards_, 1)
+			console.log(
+				`[-] ${who}'s second hand was dealt:`,
+				player.cards_[player.cards_.length - 1]
+			)
+		} catch (error) {}
 	}
 	const dealerFirstCard = dealer.cards[0][0]
 	const tenCardsNA = {

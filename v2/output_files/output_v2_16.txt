@@ -1,0 +1,132 @@
+> index
+> node --experimental-modules --unhandled-rejections=strict index.mjs
+
+[+] Welcome to Apostrophe's Blackjack Game
+[+] The Dealer is ready
+[+] Starting the Game...
+[+] Blackjack started
+[+] The Bank currently has 9000 ALGO
+
+[+] The Dealer publishes the base bet: 100 ALGO
+
+[+] The players are taking their seat at the table
+[-] Player_1 comes in with a balance of: 700 ALGO
+[-] Player_2 comes in with a balance of: 700 ALGO
+[-] Player_3 comes in with a balance of: 700 ALGO
+[-] Player_4 comes in with a balance of: 700 ALGO
+[-] Player_5 comes in with a balance of: 700 ALGO
+[-] Player_6 comes in with a balance of: 700 ALGO
+
+[+] Players are seated
+[-] Player_1 has placed his bet, with a resulting balance of: 599.9158 ALGO
+[-] Player_2 has placed his bet, with a resulting balance of: 599.9165 ALGO
+[-] Player_3 has placed his bet, with a resulting balance of: 599.9165 ALGO
+[-] Player_4 has placed his bet, with a resulting balance of: 599.9165 ALGO
+[-] Player_5 has placed his bet, with a resulting balance of: 599.9165 ALGO
+[-] Player_6 has placed his bet, with a resulting balance of: 599.9165 ALGO
+
+[+] Dealing their cards
+[-] Player_1 was dealt: [ '9', 'hearts' ]
+[-] Player_2 was dealt: [ '6', 'clovers' ]
+[-] Player_3 was dealt: [ '7', 'clovers' ]
+[-] Player_4 was dealt: [ '8', 'clovers' ]
+[-] Player_5 was dealt: [ 'K', 'clovers' ]
+[-] Player_6 was dealt: [ '8', 'hearts' ]
+[+] Dealing the Dealer
+[-] Player_1 was dealt: [ 'Q', 'hearts' ]
+[-] Player_2 was dealt: [ '2', 'diamonds' ]
+[-] Player_3 was dealt: [ 'A', 'clovers' ]
+[-] Player_4 was dealt: [ '2', 'hearts' ]
+[-] Player_5 was dealt: [ 'K', 'diamonds' ]
+[-] Player_6 was dealt: [ '10', 'hearts' ]
+[+] Dealing the Dealer
+[+] Dealing complete
+
+[+] These are the initial cards
+[-] Player_1 has: [ [ '9', 'hearts' ], [ 'Q', 'hearts' ] ]
+[-] Player_2 has: [ [ '6', 'clovers' ], [ '2', 'diamonds' ] ]
+[-] Player_3 has: [ [ '7', 'clovers' ], [ 'A', 'clovers' ] ]
+[-] Player_4 has: [ [ '8', 'clovers' ], [ '2', 'hearts' ] ]
+[-] Player_5 has: [ [ 'K', 'clovers' ], [ 'K', 'diamonds' ] ]
+[-] Player_6 has: [ [ '8', 'hearts' ], [ '10', 'hearts' ] ]
+[+] The Dealer's visible card is: [ 'K', 'hearts' ]
+
+[+] Players can now have their turns
+[-] Player_1 surrendered, his current balance is: 599.9163 ALGO
+[+] Dealer does not have a natural
+[-] Player_1's balance after viewing his outcome is: 649.9133 ALGO
+[+] The Game continues
+
+[+] Player_2 called for a hit
+[-] Player_2 was dealt: [ '6', 'hearts' ]
+[+] Player_2 called for a hit
+[-] Player_2 was dealt: [ '5', 'diamonds' ]
+[+] Player_2 called for a hit
+[-] Player_2 was dealt: [ '2', 'spades' ]
+[+] Player_2 submits his hand
+[+] Player_2's card value is 21
+
+[+] Player_3 called for a hit
+[-] Player_3 was dealt: [ '10', 'clovers' ]
+[+] Player_3 stood
+[+] Player_3 submits his hand
+[+] Player_3's card value is 18
+
+[+] Player_4 doubled down, making his total bet: 200 ALGO
+[-] Player_4 was dealt: [ '2', 'clovers' ]
+[+] Player_4 submits his hand
+[+] Player_4's card value is 12
+
+[+] Player_5 stood
+[+] Player_5 submits his hand
+[+] Player_5's card value is 20
+
+[+] Player_6 stood
+[+] Player_6 submits his hand
+[+] Player_6's card value is 18
+
+[+] Dealer now reveals his second card: [ 'J', 'clovers' ]
+[+] Dealer stood
+[+] Dealer's card value is 20
+[+] The Dealer's hand [ [ 'K', 'hearts' ], [ 'J', 'clovers' ] ]
+
+[-] Player_2's balance before his getting outcome: 599.9155 ALGO
+[-] Player_2's hand is: [
+  [ '6', 'clovers' ],
+  [ '2', 'diamonds' ],
+  [ '6', 'hearts' ],
+  [ '5', 'diamonds' ],
+  [ '2', 'spades' ]
+]
+[-] Player_2 awaits his outcome
+[+] The outcome for Player_2 is: [ 'Player Wins' ]
+[-] Player_2's balance after viewing his outcome: 799.9125 ALGO
+
+[-] Player_3's balance before his getting outcome: 599.9155 ALGO
+[-] Player_3's hand is: [ [ '7', 'clovers' ], [ 'A', 'clovers' ], [ '10', 'clovers' ] ]
+[-] Player_3 awaits his outcome
+[+] The outcome for Player_3 is: [ 'Dealer Wins' ]
+[-] Player_3's balance after viewing his outcome: 599.9135 ALGO
+
+[-] Player_4's balance before his getting outcome: 499.9135 ALGO
+[-] Player_4's hand is: [ [ '8', 'clovers' ], [ '2', 'hearts' ], [ '2', 'clovers' ] ]
+[-] Player_4 awaits his outcome
+[+] The outcome for Player_4 is: [ 'Dealer Wins' ]
+[-] Player_4's balance after viewing his outcome: 499.9115 ALGO
+
+[-] Player_5's balance before his getting outcome: 599.9155 ALGO
+[-] Player_5's hand is: [ [ 'K', 'clovers' ], [ 'K', 'diamonds' ] ]
+[-] Player_5 awaits his outcome
+[+] The outcome for Player_5 is: [ 'Push' ]
+[-] Player_5's balance after viewing his outcome: 699.9125 ALGO
+
+[-] Player_6's balance before his getting outcome: 599.9155 ALGO
+[-] Player_6's hand is: [ [ '8', 'hearts' ], [ '10', 'hearts' ] ]
+[-] Player_6 awaits his outcome
+[+] The outcome for Player_6 is: [ 'Dealer Wins' ]
+[-] Player_6's balance after viewing his outcome: 599.9135 ALGO
+
+[+] The Round has ended
+[+] The Bank is left with 9350 ALGO
+
+[+] The Dealer has ended the game, retrieving the bank balance of 9350 ALGO

@@ -798,6 +798,8 @@ const simulatePlay = async (playerCount = 4) => {
 						reach.standardUnit
 					)
 					console.log('')
+					gameEnded = true
+					break
 				} else {
 					console.log(`[+] Dealer does not have a natural`)
 					console.log(
@@ -897,7 +899,7 @@ const simulatePlay = async (playerCount = 4) => {
 			}
 		}
 	} else {
-		console.log(`[+] The remaining players must reclaim their bets`)
+		console.log(`[+] Every other player must now reclaim their bets`)
 		i = 0
 		for (i; i < playerCount; i++) {
 			const player = players[i]

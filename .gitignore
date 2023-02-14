@@ -9,4 +9,5 @@ v2/build/*
 Dockerfile
 .dockerignore
 package.json
-v*/.gitignore
+v2/.gitignore
+v1/.gitignore

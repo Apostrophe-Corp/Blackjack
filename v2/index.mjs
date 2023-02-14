@@ -568,6 +568,17 @@ const play = async (player, who) => {
  * @returns True if the Dealer had a natural, but if not, false
  */
 const playDealer = async (dealer, onSurrender = false) => {
+	if (onSurrender) {
+		try {
+			await dealer.ctc.apis.Dealer.submitHand(
+				cardValue(dealer.cards),
+				dealer.cards.length
+			)
+		} catch (error) {
+			console.log({ error })
+		}
+		return false
+	}
 	if (cardValue(dealer.cards) == 21) {
 		// Possible blackjack win
 		try {
@@ -588,20 +599,8 @@ const playDealer = async (dealer, onSurrender = false) => {
 			console.log({ error })
 		}
 		return true
-	} else {
-		if (onSurrender) {
-			try {
-				await dealer.ctc.apis.Dealer.submitHand(
-					cardValue(dealer.cards),
-					dealer.cards.length
-				)
-			} catch (error) {
-				console.log({ error })
-			}
-			return false
-		} else {
-			console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
-		}
+	} else {		
+		console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
 		let value = cardValue(dealer.cards)
 		let keepPlaying = true
 		while (keepPlaying && value < 21) {
@@ -799,7 +798,6 @@ const simulatePlay = async (playerCount = 4) => {
 						reach.standardUnit
 					)
 					console.log('')
-					return
 				} else {
 					console.log(`[+] Dealer does not have a natural`)
 					console.log(

@@ -190,19 +190,19 @@ export const main = Reach.App(() => {
 						} else if (result == PUSH) {
 							// If a player bought insurance, we do not return the insurance,
 							// because he did not lose, and the dealer did not have a natural
-							const prize =
-								bet - (boughtInsurance ? betAmount : 0)
+							const prize = bet - (boughtInsurance ? betAmount : 0)
 							if (bank + bet >= prize) transfer(prize).to(this)
 							ret(outcome.pad('Push'))
+							const newBankBal = bank + (boughtInsurance ? betAmount : 0)
 							return [
-								bank,
-								bank >= minimumBankBalance(betAmount),
+								newBankBal,
+								newBankBal >= minimumBankBalance(betAmount),
 								dealerHand,
 								dealerCount,
 								hasDealt,
 							]
 						} else if (result == RETRIEVE) {
-							if (boughtInsurance && bank + bet >= bet) transfer(bet).to(this)
+							if (bank + bet >= bet) transfer(bet).to(this)
 							ret(outcome.pad('Retrieve'))
 							return [
 								bank,

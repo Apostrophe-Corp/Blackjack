@@ -599,7 +599,7 @@ const playDealer = async (dealer, onSurrender = false) => {
 			console.log({ error })
 		}
 		return true
-	} else {		
+	} else {
 		console.log(`[+] Dealer now reveals his second card:`, dealer.cards[1])
 		let value = cardValue(dealer.cards)
 		let keepPlaying = true

@@ -966,12 +966,21 @@ reach.withDisconnect(async () =>
 			await simulatePlay(
 				maxPlayers(bankAmount(Number(initialBankView)), Number(fmt(betAmount)))
 			)
-			console.log(`[+] The Game has ended`)
+			console.log(`[+] The Round has ended`)
 			console.log(
 				'[+] The Bank is left with',
 				fmt((await dealer.ctc.v.bank())[1]),
 				reach.standardUnit
 			)
+			console.log('')
+			try {
+				const bankBal = fmt(await dealer.ctc.apis.Dealer.endGame())
+				console.log(
+					`[+] The Dealer has ended the game, retrieving the bank balance of ${bankBal} ${reach.standardUnit}`
+				)
+			} catch (error) {
+				console.log({ error })
+			}
 			reach.disconnect(null)
 		},
 	})

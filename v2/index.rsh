@@ -133,6 +133,7 @@ export const main = Reach.App(() => {
 		submitHand: Fun([UInt, UInt], Null),
 		newRound: Fun([], Null),
 		endGame: Fun([], UInt),
+		touch: Fun([], Null),
 	})
 
 	const Bank = View({
@@ -565,6 +566,17 @@ export const main = Reach.App(() => {
 			]
 		})
 	transfer(bank).to(D)
+
+	// The parallelReduce below is a neat fix to
+	// failing closeouts triggered by the use of
+	// Maps or Boxes in this contract
+	const [] = parallelReduce([])
+		.invariant(balance() == 0)
+		.while(true)
+		.api(Dealer.touch, (ret) => {
+			ret(null)
+			return []
+		})
 	commit()
 	exit()
 })

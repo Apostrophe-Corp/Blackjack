@@ -396,13 +396,14 @@ const play = async (player, who) => {
 			}
 		}
 		if (!player.surrendered) {
+			let hasDecided = false
 			let value = cardValue(player.cards)
 			while (value < 21) {
 				const choice = choices[Math.floor(Math.random() * choices.length)]
 				if (
 					cardValue(player.cards) == 9 ||
 					cardValue(player.cards) == 10 ||
-					cardValue(player.cards) == 11
+					(cardValue(player.cards) == 11 && hasDecided == false)
 				) {
 					const doubleDown = Math.floor(Math.random() * 2)
 					if (doubleDown) {
@@ -445,6 +446,7 @@ const play = async (player, who) => {
 					value = cardValue(player.cards)
 					break
 				}
+				hasDecided == true
 			}
 			try {
 				console.log(`[+] ${who} submits his hand`)
@@ -489,13 +491,14 @@ const play = async (player, who) => {
 				}
 			}
 			if (!player.surrendered_) {
+				let hasDecided = false
 				let value = cardValue(player.cards_)
 				while (value < 21) {
 					const choice = choices[Math.floor(Math.random() * choices.length)]
 					if (
 						cardValue(player.cards_) == 9 ||
 						cardValue(player.cards_) == 10 ||
-						cardValue(player.cards_) == 11
+						(cardValue(player.cards_) == 11 && hasDecided == false)
 					) {
 						const doubleDown = Math.floor(Math.random() * 2)
 						if (doubleDown) {
@@ -535,6 +538,7 @@ const play = async (player, who) => {
 						value = cardValue(player.cards_)
 						break
 					}
+					hasDecided = true
 				}
 				try {
 					console.log(`[+] ${who} submits his second hand`)

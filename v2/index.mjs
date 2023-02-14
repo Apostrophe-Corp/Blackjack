@@ -839,6 +839,7 @@ const simulatePlay = async (playerCount = 4) => {
 					)
 					console.log('')
 					gameEnded = true
+					break
 				} else {
 					console.log(`[+] Dealer does not have a natural`)
 					console.log(

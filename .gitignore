@@ -11,3 +11,4 @@ Dockerfile
 package.json
 v2/.gitignore
 v1/.gitignore
+/portal
